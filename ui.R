@@ -1,5 +1,3 @@
-## Idea: instead of this, make two tabs: upload and vis. This gives ability to choose protoclust object
-##       and maximizes screen space for  visualization
 ## Idea: could I use shinychords here?
 
 ###
@@ -22,31 +20,27 @@ dynGraph <- function(inputoutputId)
 shinyUI(
   navbarPage("protoshiny",
              id="top-nav",
-             tabPanel(title="", icon=icon("home", "fa-2x"),  
-                      column(3,
-                             wellPanel(
-                               h4("protoshiny:"),
-                               #h5(""),
-                               #p(""),
-                               #p("For more information and instructions on use, click the question mark above."),
-                               hr(),
-                               conditionalPanel(
-                                 condition = "input.upload == false",
-                                 uiOutput("choose_dataset")
-                               ),
-                               checkboxInput("upload", "Upload new dataset", FALSE),
-                               conditionalPanel(
-                                 condition = "input.upload == true",
-                                 fileInput('dataset_up', 'Choose protoclust data object (.RData)',
-                                           accept="application/x-RData")
-                               )   
-
-                      ),
-                      
-                      column(9,    
-                             dynGraph(inputoutputId = 'd3io')
-                             )
-                      )
+             tabPanel(title="", icon=icon("home", "fa-2x"),
+                      tabsetPanel(
+                        tabPanel("Data",
+                                 br(), 
+                                 column(4, 
+                                        wellPanel(
+                                          selectizeInput("upload", "Data source", choices = list("Preloaded" = FALSE, "Upload user data" = TRUE)),
+                                          uiOutput("choose_dataset")
+                                        )
+                                      ),
+                                 column(4, 
+                                        wellPanel(
+                                          verbatimTextOutput("objects"),
+                                          uiOutput("choose_object")
+                                        )),
+                                 column(4,
+                                        verbatimTextOutput("view_data"))
+                          ),
+                        tabPanel("Visualization", 
+                                 dynGraph(inputoutputId = 'd3io'))
+                        )
              ),
              #tabPanel(title="", value="http://andeekaplan.com/protoclust", icon=icon('question-circle')),
              #tabPanel(title="", value="http://andeekaplan.com", icon=icon('envelope')),
