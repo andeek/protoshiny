@@ -12,59 +12,26 @@ protoclust_to_list <- function(proto_object) {
   ##extract important parts of protoclust object
   merge <- proto_object$merge %>% data.frame
   names(merge) <- c("node1", "node2")
-  merge$height <- proto_object$height
-  labels <- proto_object$labels
+  n <- nrow(merge) + 1
+  height <- proto_object$height
   protos <- proto_object$protos
   
-  ##grow the list items
-  nodes <- merge_to_list_items(merge, labels, protos)
-  
-  ##organize the list items
-  nested_nodes <- nest_items(nodes, list())
-
-}
-
-merge_to_list_items <- function(merge, labels, protos) {
-  elements <- list()
-  for(i in 1:nrow(merge)) {
-    if(merge[i, "node1"] > 0 & merge[i, "node2"] > 0) {
-      #merging two groups
-      elements[[i]] <- list(name = labels[protos[i]], 
-                            height = merge[i, "height"],
-                            children = c(list(name = labels[protos[merge[i, "node1"]]]),
-                                         list(name = labels[protos[merge[i, "node2"]]])))
-    } else if(merge[i, "node1"] < 0 & merge[i, "node2"] > 0) {
-      ##merging one leaf and one group
-      elements[[i]] <- list(name = labels[protos[i]], 
-                            height = merge[i, "height"],
-                            children = c(list(name = labels[-merge[i, "node1"]]),
-                                         list(name = labels[protos[merge[i, "node2"]]])))
-    } else if(merge[i, "node1"] > 0 & merge[i, "node2"] < 0) {
-      ##merging one leaf and one group
-      elements[[i]] <- list(name = labels[protos[i]], 
-                            height = merge[i, "height"],
-                            children = c(list(name = labels[protos[merge[i, "node1"]]]),
-                                         list(name = labels[-merge[i, "node2"]])))
+  leaves <- lapply(1:n, function(i) return(list(proto = i, height = 0)))
+  clusters <- list()
+  for(i in 1:(n-1)) {
+    if(merge[i, 1] < 0) {
+      a <- leaves[[-merge[i,1]]]
     } else {
-      ##merging two leafs
-      elements[[i]] <- list(name = labels[protos[i]], 
-                            height = merge[i, "height"],
-                            children = c(list(name = labels[-merge[i, "node1"]]),
-                                         list(name = labels[-merge[i, "node2"]])))
+      a <- clusters[[merge[i,1]]]
+      clusters[[merge[i,1]]] <- NA
     }
+    if(merge[i, 2] < 0) {
+      b <- leaves[[-merge[i,2]]]
+    } else {
+      b <- clusters[[merge[i,2]]]
+      clusters[[merge[i,2]]] <- NA
+    }
+    clusters[[i]] <- list(name = i, proto = protos[i], height = height[i], children = list(a, b))
   }
-  names(elements) <- labels[protos]
-  return(elements)
-}
-
-nest_items <- function(nodes, nested) {
-  ##need to locate where in nested we should start adding
-  if(nested$name == names(nodes)[length(nodes)])
-  
-  nested <- nodes[[length(nodes)]]
-  children <- nodes[unlist(nodes[[length(nodes)]]$children)]
-  nested$children <- c(children[[1]], 
-                       children[[2]]) #dendrogram, each split has two children
-  
-  remaining <- nodes[!(names(nodes) %in% c(unlist(nodes[[length(nodes)]]$children), nodes[[length(nodes)]]$name))]
+  return(clusters[[n-1]])
 }

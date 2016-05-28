@@ -10,14 +10,15 @@ Shiny.outputBindings.register(outputBinding);
 
 function wrapper(el, data) {  
   var width = $('svg').parent().width(),
-      height = $(window).height() - $('.span12').height() - 50 - $('.nav-tabs').height() - $('.navbar').height();
+      height = $(window).height() - $('.span12').height() - 50 - $('.nav-tabs').height() - $('.navbar').height(),
+      margin = {top: 10, bottom: 10, left: 25, right: 10};
       
   var i = 0,
     duration = 750,
     root;
 
   var tree = d3.layout.tree()
-      .size([height, width]);
+      .size([height - margin.top - margin.bottom, width - margin.left - margin.right]);
   
   var diagonal = d3.svg.diagonal()
       .projection(function(d) { return [d.y, d.x]; });
@@ -26,32 +27,29 @@ function wrapper(el, data) {
   var svg = d3.select(el).append("svg")
       .attr("width", width)
       .attr("height", height)
-    .append("g");
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   
-  console.log(data);
-  proto_data = JSON.parse(data);
-  console.log(proto_data);
-  //d3.json(data, function(error, proto_data) {
-  //  if (error) throw error;
-    
-    root = proto_data;
-    root.x0 = height / 2;
-    root.y0 = 0;
-    
-    function collapse(d) {
-      if (d.children) {
-        d._children = d.children;
-        d._children.forEach(collapse);
-        d.children = null;
-      }
+  root = data;
+  root.x0 = height / 2;
+  root.y0 = 0;
+  
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d._children.forEach(collapse);
+      d.children = null;
     }
-  
-    root.children.forEach(collapse);
-    update(root);
-  //});
+  }
+
+  root.children.forEach(collapse);
+  console.log(root);
+  update(root);
 
   function update(source) {
-
+    
+    console.log(source);
+    
     // Compute the new tree layout.
     var nodes = tree.nodes(source).reverse(),
         links = tree.links(nodes);
@@ -139,6 +137,7 @@ function wrapper(el, data) {
   
   // Toggle children on click.
   function click(d) {
+    console.log(d);
     if (d.children) {
       d._children = d.children;
       d.children = null;
