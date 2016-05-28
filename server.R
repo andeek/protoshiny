@@ -92,7 +92,7 @@ shinyServer(function(input, output) {
   
   ##send data to client side handler
   output$d3io <- reactive({ 
-    dat <- toJSON(protoclust_to_list(data()))
+    dat <- toJSON(protoclust_to_list(data()), auto_unbox = TRUE)
     dat
   })
 
