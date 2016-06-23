@@ -15,8 +15,9 @@ protoclust_to_list <- function(proto_object) {
   n <- nrow(merge) + 1
   height <- proto_object$height
   protos <- proto_object$protos
+  labels <- proto_object$labels
   
-  leaves <- lapply(1:n, function(i) return(list(proto = i, height = 0)))
+  leaves <- lapply(1:n, function(i) return(list(name = labels[i], proto = i, height = 0)))
   clusters <- list()
   for(i in 1:(n-1)) {
     if(merge[i, 1] < 0) {
@@ -31,7 +32,7 @@ protoclust_to_list <- function(proto_object) {
       b <- clusters[[merge[i,2]]]
       clusters[[merge[i,2]]] <- NA
     }
-    clusters[[i]] <- list(name = i, proto = protos[i], height = height[i], children = list(a, b))
+    clusters[[i]] <- list(name = labels[protos[i]], proto = protos[i], height = height[i], children = list(a, b))
   }
   return(clusters[[n-1]])
 }
