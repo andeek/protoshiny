@@ -18,7 +18,7 @@ function wrapper(el, data) {
     root;
 
   var cluster = d3.layout.cluster()
-      .size([height, width]);
+      .size([height - 10, width - 60]);
 
   var diagonal = d3.svg.diagonal()
       .projection(function(d) { return [d.y, d.x]; });
