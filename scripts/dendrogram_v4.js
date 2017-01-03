@@ -15,7 +15,7 @@ function wrapper(el, data) {
       width = $(window).width() - margin.right - margin.left,
       height = 2000 - margin.top - margin.bottom;
 
-  var tree = d3.cluster()
+  var tree = d3.tree()
       .size([height - 10, width - 60]);
 
   if(data) {
@@ -23,14 +23,19 @@ function wrapper(el, data) {
     
     // create hierarchy
     var root = d3.hierarchy(data, function(d) { return d.children; });
-    root.sum(function(d) { return d.height});
     
-    // manually set heights
-    root.each(function(r) {
-      r.height = r.value;
-    });
+    // calculate cumulative heights
+    //root.sum(function(d) { return d.height});
     
-    console.log(root);
+    console.log(root.leaves());
+     
+    
+        
+    //rescale heights
+    var x_map = d3.scaleLinear()
+      .domain([0, root.data.height])
+      .range([width - 60, 0]);
+
     
     // create dendro object  
     tree(root);
@@ -49,10 +54,9 @@ function wrapper(el, data) {
       .enter().append("path")
         .attr("class", "link")
         .attr("d", function(d) {
-          return "M" + d.y + "," + d.x
-            + "C" + (d.parent.y + root.leaves().length/3) + "," + d.x
-            + " " + (d.parent.y + root.leaves().length/3) + "," + d.parent.x
-            + " " + d.parent.y + "," + d.parent.x;
+          return "M" + x_map(d.data.height) + "," + d.x
+            + "L" + x_map(d.parent.data.height) + "," + d.x
+            + " " + x_map(d.parent.data.height) + "," + d.parent.x;
       });
     
     // append nodes
@@ -60,7 +64,7 @@ function wrapper(el, data) {
         .data(root.descendants())
       .enter().append("g")
         .attr("class", function(d) { return "node" + (d.children ? " node--internal" : " node--leaf"); })
-        .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+        .attr("transform", function(d) { return "translate(" + x_map(d.data.height) + "," + d.x + ")"; });
 
     node.append("circle")
         .attr("r", 2.5);
