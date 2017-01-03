@@ -12,12 +12,12 @@ function wrapper(el, data) {
   var margin = {top: 10, bottom: 10, left: 25, right: 10},
       width = $('svg').parent().width() - margin.right - margin.left,
       height = $(window).height() - $('.span12').height() - 50 - $('.nav-tabs').height() - $('.navbar').height() - margin.top - margin.bottom;
-
+  
   var i = 0,
     duration = 750,
     root;
 
-  var tree = d3.layout.tree()
+  var cluster = d3.layout.cluster()
       .size([height, width]);
 
   var diagonal = d3.svg.diagonal()
@@ -46,9 +46,9 @@ function wrapper(el, data) {
   update(root);
 
   function update(source) {
-    // Compute the new tree layout.
-    var nodes = tree.nodes(root).reverse(),
-        links = tree.links(nodes);
+    // Compute the new cluster layout.
+    var nodes = cluster.nodes(root).reverse(),
+        links = cluster.links(nodes);
 
     // Normalize for fixed-depth.
     nodes.forEach(function(d) { d.y = d.depth * 180; });
@@ -78,11 +78,15 @@ function wrapper(el, data) {
     var nodeUpdate = node.transition()
         .duration(duration)
         .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
-
+    
+    console.log(nodeUpdate);
+    
     nodeUpdate.select("circle")
         .attr("r", 4.5)
         .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
-
+    
+    
+    
     nodeUpdate.select("text")
         .style("fill-opacity", 1);
 
