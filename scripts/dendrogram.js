@@ -113,13 +113,11 @@ function wrapper(el, data) {
             + "L" + x_map(source.y0) + "," + source.x0;
       });
     
-    console.log(link);
 
     // Transition links to their new position.
     link.transition()
         .duration(duration)
         .attr("d", function(d) {
-          console.log(d);
           return "M" + x_map(d.target.height) + "," + d.target.x
             + "L" + x_map(d.source.height) + "," + d.target.x
             + " " + x_map(d.source.height) + "," + d.source.x;
@@ -136,7 +134,7 @@ function wrapper(el, data) {
 
     // Stash the old positions for transition.
     nodes.forEach(function(d) {
-      d.x0 = d.x0;
+      d.x0 = d.x;
       d.y0 = d.height;
     });
   }
