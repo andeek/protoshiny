@@ -11,14 +11,14 @@ Shiny.outputBindings.register(outputBinding);
 function wrapper(el, data) {
   var margin = {top: 10, bottom: 10, left: 25, right: 10},
       width = $(window).width() - margin.right - margin.left,
-      height = $(window).height() - $('.span12').height() - 50 - $('.nav-tabs').height() - $('.navbar').height() - margin.top - margin.bottom;
+      height = $(window).height() - $('.span12').height() - 50 - $('.nav-tabs').height() - $('.navbar').height();
   
   var i = 0,
     duration = 750,
     root;
 
   var cluster = d3.layout.cluster()
-      .size([height - 10, width - 60]);
+      .size([height - margin.bottom, width - 60]);
 
   var diagonal = d3.svg.diagonal()
       .projection(function(d) { return [d.y, d.x]; });

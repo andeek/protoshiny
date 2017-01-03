@@ -1,12 +1,7 @@
 ###
-### Libraries
+### Helper functions
 ###
-library(jsonlite)
-
-###
-### Additional functions
-###
-source("helpers.R")
+source("r/helpers.R")
 
 ##list of default data files
 data_sets <- list.files("data/", pattern="*.RData")
@@ -92,7 +87,7 @@ shinyServer(function(input, output) {
   
   ##send data to client side handler
   output$d3io <- reactive({ 
-    dat <- toJSON(protoclust_to_list(data()), auto_unbox = TRUE)
+    dat <- protoclust_to_list(data())
     dat
   })
 
