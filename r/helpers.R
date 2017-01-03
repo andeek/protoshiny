@@ -15,7 +15,7 @@ protoclust_to_json <- function(proto_object) {
   labels <- proto_object$labels
   
   leaves <- vapply(1:n, 
-                   FUN = function(i) return(paste0("{ name : ", labels[i], ", proto : ", i, ",  height : 0 }")),
+                   FUN = function(i) return(paste0('{ "name" : "', labels[i], '", "proto" : ', i, ',  "height" : 0 }')),
                    FUN.VALUE = "character()")
   clusters <- character()
   for(i in 1:(n-1)) {
@@ -31,7 +31,7 @@ protoclust_to_json <- function(proto_object) {
       b <- clusters[[merge[i,2]]]
       clusters[merge[i,2]] <- NA
     }
-    clusters[i] <- paste0("{ name : ", labels[protos[i]], ", proto : ", protos[i], ",  height : ", height[i], ", children : [" , paste(a, b, collapse = ", "), "]}")
+    clusters[i] <- paste0('{ "name" : "', labels[protos[i]], '", "proto" : ', protos[i], ',  "height" : ', height[i], ', "children" : [' , paste(a, b, sep = ", "), ']}')
   }
   return(clusters[n-1])
 }

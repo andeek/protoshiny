@@ -31,7 +31,9 @@ function wrapper(el, data) {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   
   if(data) { // wait for data to load
-      root = data;
+      console.log(data);
+      root = JSON.parse(data);
+      console.log(root);
       root.x0 = height / 2;
       root.y0 = root.height;
       
