@@ -10,7 +10,7 @@ Shiny.outputBindings.register(outputBinding);
 
 function wrapper(el, data) {
   var margin = {top: 10, bottom: 10, left: 25, right: 10},
-      width = $('svg').parent().width() - margin.right - margin.left,
+      width = $(window).width() - margin.right - margin.left,
       height = $(window).height() - $('.span12').height() - 50 - $('.nav-tabs').height() - $('.navbar').height() - margin.top - margin.bottom;
   
   var i = 0,
@@ -29,21 +29,23 @@ function wrapper(el, data) {
       .attr("height", height)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
+  if(data) { // wait for data to load
+      root = data;
+      root.x0 = height / 2;
+      root.y0 = root.height;
+      
 
-  root = data;
-  root.x0 = height / 2;
-  root.y0 = 0;
+      //rescale heights
+      var x_map = d3.scale.linear()
+        .domain([0, root.height])
+        .range([width - 60, 0]);
+      
+      // collapse children and draw tree
+      root.children.forEach(collapse);
+      update(root);
 
-  function collapse(d) {
-    if (d.children) {
-      d._children = d.children;
-      d._children.forEach(collapse);
-      d.children = null;
-    }
   }
-
-  root.children.forEach(collapse);
-  update(root);
 
   function update(source) {
     // Compute the new cluster layout.
@@ -60,7 +62,7 @@ function wrapper(el, data) {
     // Enter any new nodes at the parent's previous position.
     var nodeEnter = node.enter().append("g")
         .attr("class", "node")
-        .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+        .attr("transform", function(d) { return "translate(" + x_map(source.y0) + "," + source.x0 + ")"; })
         .on("click", click);
 
     nodeEnter.append("circle")
@@ -68,7 +70,7 @@ function wrapper(el, data) {
         .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
     nodeEnter.append("text")
-        .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+        .attr("x", function(d) { return d.children || d._children ? -8 : 8; })
         .attr("dy", ".35em")
         .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
         .text(function(d) { return d.name; })
@@ -77,15 +79,12 @@ function wrapper(el, data) {
     // Transition nodes to their new position.
     var nodeUpdate = node.transition()
         .duration(duration)
-        .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
-    
-    console.log(nodeUpdate);
+        .attr("transform", function(d) { return "translate(" + x_map(d.height) + "," + d.x + ")"; });
     
     nodeUpdate.select("circle")
         .attr("r", 4.5)
         .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
-    
-    
+
     
     nodeUpdate.select("text")
         .style("fill-opacity", 1);
@@ -93,7 +92,7 @@ function wrapper(el, data) {
     // Transition exiting nodes to the parent's new position.
     var nodeExit = node.exit().transition()
         .duration(duration)
-        .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+        .attr("transform", function(d) { return "translate(" + x_map(source.height) + "," + source.x + ")"; })
         .remove();
 
     nodeExit.select("circle")
@@ -110,28 +109,35 @@ function wrapper(el, data) {
     link.enter().insert("path", "g")
         .attr("class", "link")
         .attr("d", function(d) {
-          var o = {x: source.x0, y: source.y0};
-          return diagonal({source: o, target: o});
-        });
+          return "M" + x_map(source.y0) + "," + source.x0
+            + "L" + x_map(source.y0) + "," + source.x0;
+      });
+    
+    console.log(link);
 
     // Transition links to their new position.
     link.transition()
         .duration(duration)
-        .attr("d", diagonal);
+        .attr("d", function(d) {
+          console.log(d);
+          return "M" + x_map(d.target.height) + "," + d.target.x
+            + "L" + x_map(d.source.height) + "," + d.target.x
+            + " " + x_map(d.source.height) + "," + d.source.x;
+      });
 
     // Transition exiting nodes to the parent's new position.
     link.exit().transition()
         .duration(duration)
         .attr("d", function(d) {
-          var o = {x: source.x, y: source.y};
-          return diagonal({source: o, target: o});
+          return "M" + x_map(d.source.height) + "," + d.source.x
+            + "L" + x_map(d.source.height) + "," + d.source.x;
         })
         .remove();
 
     // Stash the old positions for transition.
     nodes.forEach(function(d) {
-      d.x0 = d.x;
-      d.y0 = d.y;
+      d.x0 = d.x0;
+      d.y0 = d.height;
     });
   }
 
@@ -146,8 +152,16 @@ function wrapper(el, data) {
     }
     update(d);
   }
-
-
-
-
+  
+  // collapse childen nodes  
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d._children.forEach(collapse);
+      d.children = null;
+    }
+  }
+  
 }
+
+

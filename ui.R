@@ -46,10 +46,10 @@ shinyUI(
              #tabPanel(title="", value="http://andeekaplan.com", icon=icon('envelope')),
              tabPanel(title="", value="http://github.com/andeek/protoshiny", icon=icon("github", "fa-2x")),
              footer = tagList(
-               includeScript("scripts/d3.v4.min.js", charset="utf-8"),
+               includeScript("scripts/d3.v3.min.js", charset="utf-8"),
                includeScript("scripts/top-nav-links.js"),
                includeCSS("css/dendrogram.css"),
-               includeScript("scripts/dendrogram_v4.js")
+               includeScript("scripts/dendrogram.js")
              ),
              theme = shinytheme("spacelab")
   )
