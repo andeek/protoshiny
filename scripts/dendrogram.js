@@ -9,16 +9,17 @@ $.extend(outputBinding, {
 Shiny.outputBindings.register(outputBinding);
 
 function wrapper(el, data) {
-  var margin = {top: 10, bottom: 10, left: 25, right: 10},
+  var margin = {top: 10, bottom: 5, left: 25, right: 10},
       width = $(window).width() - margin.right - margin.left,
-      height = $(window).height() - $('.span12').height() - 50 - $('.nav-tabs').height() - $('.navbar').height();
+      height = $(window).height() - $('.span12').height() - $('.nav-tabs').height() - $('.navbar').height() - margin.bottom - margin.top;
+
   
   var i = 0,
     duration = 750,
     root;
 
   var cluster = d3.layout.cluster()
-      .size([height - margin.bottom, width - 60]);
+      .size([height - margin.bottom - 50, width - 60]);
 
   var diagonal = d3.svg.diagonal()
       .projection(function(d) { return [d.y, d.x]; });
@@ -29,19 +30,63 @@ function wrapper(el, data) {
       .attr("height", height)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  
+      
+  //slider stuff
+  var slider = svg.append("g")
+    .attr("class", "slider")
+    .attr("transform", "translate(0, " + (height - margin.bottom - 50) + ")");
+    
+  var max_height = 0;
   if(data) { // wait for data to load
-      console.log(data);
       root = JSON.parse(data);
-      console.log(root);
       root.x0 = height / 2;
       root.y0 = root.height;
       
-
-      //rescale heights
+      
+      // rescale heights
+      max_height = root.height;
       var x_map = d3.scale.linear()
-        .domain([0, root.height])
+        .domain([0, max_height])
         .range([width - 60, 0]);
+      
+      // slider scale
+      var slide_x = d3.scale.linear()
+        .domain([0, root.height])
+        .range([0, width - 60])
+        .clamp(true);
+        
+      var drag = d3.behavior.drag();
+      
+      // slider axis  
+      slider.append("line")
+          .attr("class", "track")
+          .attr("x1", slide_x.range()[0])
+          .attr("x2", slide_x.range()[1])
+        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+          .attr("class", "track-inset")
+        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+          .attr("class", "track-left")
+        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+          .attr("class", "track-overlay")
+          .call(drag.on("drag", function() { zoomed(slide_x.invert(d3.event.x)); }));
+        
+        slider.insert("g", ".track-overlay")
+            .attr("class", "ticks")
+            .attr("transform", "translate(0," + 18 + ")")
+          .selectAll("text")
+          .data(slide_x.ticks(10))
+          .enter().append("text")
+            .attr("x", slide_x)
+            .attr("text-anchor", "middle")
+            .text(function(d) { return d; });
+        
+        // slider handle
+        var handle = slider.insert("circle", ".track-overlay")
+            .attr("class", "handle")
+            .attr("r", 9)
+            .attr("cx", slide_x.range()[1]);
+        
+
       
       // collapse children and draw tree
       root.children.forEach(collapse);
@@ -160,6 +205,19 @@ function wrapper(el, data) {
       d._children.forEach(collapse);
       d.children = null;
     }
+  }
+  
+  function zoomed(x_max) {
+    console.log(x_max);
+    console.log(max_height);
+    
+    // move slider
+    handle.attr("cx", slide_x(x_max));
+    d3.select(".track-left").attr("x2", slide_x(x_max));
+    
+    // zoom
+    x_map.domain([max_height - x_max, max_height]);
+    update(root);
   }
   
 }

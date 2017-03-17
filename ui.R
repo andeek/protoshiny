@@ -39,8 +39,9 @@ shinyUI(
                                         verbatimTextOutput("view_data"))
                           ),
                         tabPanel("Visualization", 
-                                 dynGraph(inputoutputId = 'd3io'))
+                                 dynGraph(inputoutputId = 'd3io')
                         )
+                      )
              ),
              #tabPanel(title="", value="http://andeekaplan.com/protoclust", icon=icon('question-circle')),
              #tabPanel(title="", value="http://andeekaplan.com", icon=icon('envelope')),
@@ -49,6 +50,7 @@ shinyUI(
                includeScript("scripts/d3.v3.min.js", charset="utf-8"),
                includeScript("scripts/top-nav-links.js"),
                includeCSS("css/dendrogram.css"),
+               includeCSS("css/slider.css"),
                includeScript("scripts/dendrogram.js")
              ),
              theme = shinytheme("spacelab")
