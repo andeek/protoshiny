@@ -208,15 +208,18 @@ function wrapper(el, data) {
   }
   
   function zoomed(x_max) {
-    console.log(x_max);
-    console.log(max_height);
-    
     // move slider
     handle.attr("cx", slide_x(x_max));
     d3.select(".track-left").attr("x2", slide_x(x_max));
     
+    var left = max_height - x_max;
+    console.log(left);
+    
+    if(left === max_height) left = max_height - 0.0001;
+    
+    
     // zoom
-    x_map.domain([max_height - x_max, max_height]);
+    x_map.domain([left, max_height]);
     update(root);
   }
   
