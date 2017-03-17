@@ -9,50 +9,67 @@ $.extend(outputBinding, {
 Shiny.outputBindings.register(outputBinding);
 
 function wrapper(el, data) {
-  var margin = {top: 10, bottom: 5, left: 25, right: 10},
-      width = $(window).width() - margin.right - margin.left,
+  var margin = {top: 10, bottom: 5, left: 0, right: 10},
       height = $(window).height() - $('.span12').height() - $('.nav-tabs').height() - $('.navbar').height() - margin.bottom - margin.top;
-
-  
+    
   var i = 0,
     duration = 750,
     root;
-
-  var cluster = d3.layout.cluster()
-      .size([height - margin.bottom - 50, width - 60]);
-
-  var diagonal = d3.svg.diagonal()
-      .projection(function(d) { return [d.y, d.x]; });
-
-  d3.select(el).select("svg").remove();
-  var svg = d3.select(el).append("svg")
-      .attr("width", width)
-      .attr("height", height)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      
-  //slider stuff
-  var slider = svg.append("g")
-    .attr("class", "slider")
-    .attr("transform", "translate(0, " + (height - margin.bottom - 50) + ")");
-    
-  var max_height = 0;
+  
   if(data) { // wait for data to load
       root = JSON.parse(data);
       root.x0 = height / 2;
       root.y0 = root.height;
       
+      var maxLabelLength = 0;
+      var leaves = [];
+      visit(root, function(d) {
+        maxLabelLength = Math.max(d.name.length, maxLabelLength);
+		    if (!d.children && !d._children) {leaves.push(d);}
+      }, function(d) {
+        if (d.children) {return d.children;}
+		    else if (d._children) {return d._chilren;}
+		    else{return null;}
+      });
       
+      
+      var right_label_pad = maxLabelLength*15,
+          left_label_pad = root.name.length*15,
+          slider_pad = 50,
+          width = $(window).width() - margin.right - margin.left;
+          
+
+      var cluster = d3.layout.cluster()
+          .size([height - slider_pad - margin.bottom, width - right_label_pad - left_label_pad]);
+
+
+      var diagonal = d3.svg.diagonal()
+          .projection(function(d) { return [d.y, d.x]; });
+    
+      d3.select(el).select("svg").remove();
+      var svg = d3.select(el).append("svg")
+          .attr("width", width)
+          .attr("height", height)
+        .append("g")
+          .attr("transform", "translate(" + left_label_pad + "," + margin.top + ")");
+          
+      //slider stuff
+      var slider = svg.append("g")
+        .attr("class", "slider")
+        .attr("transform", "translate(0, " + (height - slider_pad - margin.bottom) + ")");
+        
+      var max_height = 0;
+
       // rescale heights
       max_height = root.height;
       var x_map = d3.scale.linear()
         .domain([0, max_height])
-        .range([width - 60, 0]);
+        .range([width - right_label_pad - left_label_pad, 0]);
       
       // slider scale
       var slide_x = d3.scale.linear()
         .domain([0, root.height])
-        .range([0, width - 60])
+        .range([0, width - right_label_pad - left_label_pad])
         .clamp(true);
         
       var drag = d3.behavior.drag();
@@ -213,14 +230,25 @@ function wrapper(el, data) {
     d3.select(".track-left").attr("x2", slide_x(x_max));
     
     var left = max_height - x_max;
-    console.log(left);
-    
     if(left === max_height) left = max_height - 0.0001;
-    
     
     // zoom
     x_map.domain([left, max_height]);
     update(root);
+  }
+  
+  function visit(parent, visitFn, childrenFn) {
+      if (!parent) return;
+  
+      visitFn(parent);
+  
+      var children = childrenFn(parent);
+      if (children) {
+          var count = children.length;
+          for (var i = 0; i < count; i++) {
+              visit(children[i], visitFn, childrenFn);
+          }
+      }
   }
   
 }
