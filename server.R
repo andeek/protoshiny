@@ -82,7 +82,8 @@ shinyServer(function(input, output) {
   
   output$view_data <- renderPrint({
     dat <- data()
-    str(dat)
+    dat$paths <- protoclust::find_elements(dat)
+    str(dat[-length(dat)])
   })
   
   ##send data to client side handler
