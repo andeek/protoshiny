@@ -68,7 +68,7 @@ function wrapper(el, data) {
       
       // slider scale
       var slide_x = d3.scale.linear()
-        .domain([0, root.height])
+        .domain([root.height, 0])
         .range([0, width - right_label_pad - left_label_pad])
         .clamp(true);
         
@@ -82,28 +82,38 @@ function wrapper(el, data) {
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
           .attr("class", "track-inset")
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-          .attr("class", "track-left")
+          .attr("class", "track-middle")
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-          .attr("class", "track-overlay")
-          .call(drag.on("drag", function() { zoomed(slide_x.invert(d3.event.x)); }));
+          .attr("class", "track-overlay");
+          
+          
         
-        slider.insert("g", ".track-overlay")
-            .attr("class", "ticks")
-            .attr("transform", "translate(0," + 18 + ")")
-          .selectAll("text")
-          .data(slide_x.ticks(10))
-          .enter().append("text")
-            .attr("x", slide_x)
-            .attr("text-anchor", "middle")
-            .text(function(d) { return d; });
-        
-        // slider handle
-        var handle = slider.insert("circle", ".track-overlay")
-            .attr("class", "handle")
-            .attr("r", 9)
-            .attr("cx", slide_x.range()[1]);
-        
-
+      slider.insert("g", ".track-overlay")
+          .attr("class", "ticks")
+          .attr("transform", "translate(0," + 18 + ")")
+        .selectAll("text")
+        .data(slide_x.ticks(10))
+        .enter().append("text")
+          .attr("x", slide_x)
+          .attr("text-anchor", "middle")
+          .text(function(d) { return d; });
+      
+      // slider handle
+      var handle_max = slider.append("circle", ".track-overlay")
+          .attr("class", "handle max")
+          .attr("r", 9)
+          .attr("cx", slide_x.range()[1])
+          .call(drag.on("drag", zoomed));
+          
+      
+          
+      var handle_min = slider.append("circle", ".track-overlay")
+          .attr("class", "handle min")
+          .attr("r", 9)
+          .attr("cx", slide_x.range()[0])
+          .call(drag.on("drag", zoomed));
+          
+      
       
       // collapse children and draw tree
       root.children.forEach(collapse);
@@ -224,16 +234,34 @@ function wrapper(el, data) {
     }
   }
   
-  function zoomed(x_max) {
-    // move slider
-    handle.attr("cx", slide_x(x_max));
-    d3.select(".track-left").attr("x2", slide_x(x_max));
+  function zoomed(d) {
+    var x_val = slide_x.invert(d3.event.x);
+    var right, left;
     
-    var left = max_height - x_max;
-    if(left === max_height) left = max_height - 0.0001;
-    
-    // zoom
-    x_map.domain([left, max_height]);
+    console.log(d3.event.x);
+    if(d3.select(this).attr("class") == "handle max") {
+      // move slider
+      handle_max.attr("cx", slide_x(x_val));
+      
+      d3.select(".track-middle")
+        .attr("x2", slide_x(x_val));
+      
+      // zoom
+      x_map.domain([x_val, slide_x.invert(handle_min.attr("cx"))]);
+      
+    } else if(d3.select(this).attr("class") == "handle min") {
+      // move slider
+      handle_min.attr("cx", slide_x(x_val));
+      
+      d3.select(".track-middle")
+        .attr("x1", slide_x(x_val));
+        
+      left = x_val;
+      if(left === max_height) left = max_height - 0.0001;
+      
+      // zoom
+      x_map.domain([slide_x.invert(handle_max.attr("cx")), left]);
+    }
     update(root);
   }
   

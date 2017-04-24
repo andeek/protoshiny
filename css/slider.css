@@ -5,7 +5,7 @@
 .track,
 .track-inset,
 .track-overlay,
-.track-left {
+.track-middle {
   stroke-linecap: round;
 }
 
@@ -20,7 +20,7 @@
   stroke-width: 8px;
 }
 
-.track-left {
+.track-middle {
   stroke: steelblue;
   stroke-width: 8px;
 }
