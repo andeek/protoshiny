@@ -33,8 +33,8 @@ function wrapper(el, data) {
       });
       
       
-      var right_label_pad = maxLabelLength*15,
-          left_label_pad = root.name.length*15,
+      var right_label_pad = maxLabelLength*7 + 10,
+          left_label_pad = root.name.length*7 + 10,
           slider_pad = 50,
           width = $(window).width() - margin.right - margin.left;
           
@@ -98,14 +98,12 @@ function wrapper(el, data) {
           .attr("text-anchor", "middle")
           .text(function(d) { return d; });
       
-      // slider handle
+      // slider handles
       var handle_max = slider.append("circle", ".track-overlay")
           .attr("class", "handle max")
           .attr("r", 9)
           .attr("cx", slide_x.range()[1])
           .call(drag.on("drag", zoomed));
-          
-      
           
       var handle_min = slider.append("circle", ".track-overlay")
           .attr("class", "handle min")
@@ -116,7 +114,7 @@ function wrapper(el, data) {
       
       
       // collapse children and draw tree
-      root.children.forEach(collapse);
+      root.children.forEach(function(d, i){ d.children.forEach(function(d, i){ d.children.forEach(collapse); }); });
       update(root);
 
   }
@@ -240,6 +238,9 @@ function wrapper(el, data) {
     
     console.log(d3.event.x);
     if(d3.select(this).attr("class") == "handle max") {
+      var min_val = slide_x.invert(handle_min.attr("cx"));
+      if(x_val >= min_val) x_val = min_val - .0001;
+      
       // move slider
       handle_max.attr("cx", slide_x(x_val));
       
@@ -247,20 +248,24 @@ function wrapper(el, data) {
         .attr("x2", slide_x(x_val));
       
       // zoom
-      x_map.domain([x_val, slide_x.invert(handle_min.attr("cx"))]);
+      x_map.domain([x_val, min_val]);
       
     } else if(d3.select(this).attr("class") == "handle min") {
-      // move slider
-      handle_min.attr("cx", slide_x(x_val));
-      
-      d3.select(".track-middle")
-        .attr("x1", slide_x(x_val));
         
       left = x_val;
       if(left === max_height) left = max_height - 0.0001;
       
+      var max_val = slide_x.invert(handle_max.attr("cx"));
+      if(left <= max_val) left = max_val + .0001;
+      
+      // move slider
+      handle_min.attr("cx", slide_x(left));
+      
+      d3.select(".track-middle")
+        .attr("x1", slide_x(left));
+      
       // zoom
-      x_map.domain([slide_x.invert(handle_max.attr("cx")), left]);
+      x_map.domain([max_val, left]);
     }
     update(root);
   }
