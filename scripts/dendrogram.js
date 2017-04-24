@@ -236,10 +236,11 @@ function wrapper(el, data) {
     var x_val = slide_x.invert(d3.event.x);
     var right, left;
     
-    console.log(d3.event.x);
+    console.log(x_val);
+    
     if(d3.select(this).attr("class") == "handle max") {
       var min_val = slide_x.invert(handle_min.attr("cx"));
-      if(x_val >= min_val) x_val = min_val - .0001;
+      if(x_val >= min_val - .005) x_val = min_val - 0.005;
       
       // move slider
       handle_max.attr("cx", slide_x(x_val));
@@ -256,7 +257,7 @@ function wrapper(el, data) {
       if(left === max_height) left = max_height - 0.0001;
       
       var max_val = slide_x.invert(handle_max.attr("cx"));
-      if(left <= max_val) left = max_val + .0001;
+      if(left <= max_val + .005) left = max_val + 0.005;
       
       // move slider
       handle_min.attr("cx", slide_x(left));
