@@ -82,16 +82,25 @@ shinyServer(function(input, output) {
   
   output$view_data <- renderPrint({
     dat <- data()
-    # dat$paths <- protoclust::find_elements(dat)
     str(dat[-length(dat)])
   })
   
   ##send data to client side handler
   output$d3io <- reactive({ 
     dat <- protoclust_to_json(data())
-    dat
+    list(data = dat, path = input$select_label)
   })
-
+  
+  output$select_label <- reactive({ 
+    dat <- data()
+    res <- protoclust::find_elements(dat)
+    names(res) <- dat$labels
+    res
+  })
+  
+  output$test <- renderPrint({
+    input$select_label
+  })
   
 
   

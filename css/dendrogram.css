@@ -28,3 +28,10 @@
   stroke-opacity: 0.4;
   stroke-width: 1.5px;
 }
+
+
+.selectize-input {
+  max-width: 300px;
+}
+
+

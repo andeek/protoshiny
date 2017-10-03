@@ -1,5 +1,3 @@
-## Idea: could I use shinychords here?
-
 ###
 ### Libraries
 ###
@@ -12,6 +10,11 @@ library(shinythemes)
 dynGraph <- function(inputoutputId) 
 {
   div(id = inputoutputId, class="d3graph")
+}
+
+selectJS <- function(inputoutputId) 
+{
+  div(id = inputoutputId, class="select_custom")
 }
 
 ###
@@ -39,19 +42,22 @@ shinyUI(
                                         verbatimTextOutput("view_data"))
                           ),
                         tabPanel("Visualization", 
-                                 dynGraph(inputoutputId = 'd3io')
+                                 column(12, dynGraph(inputoutputId = 'd3io'), selectJS(inputoutputId = "select_label")),
+                                 column(12, verbatimTextOutput("test"))
+                                 
                         )
                       )
              ),
-             #tabPanel(title="", value="http://andeekaplan.com/protoclust", icon=icon('question-circle')),
-             #tabPanel(title="", value="http://andeekaplan.com", icon=icon('envelope')),
              tabPanel(title="", value="http://github.com/andeek/protoshiny", icon=icon("github", "fa-2x")),
              footer = tagList(
                includeScript("scripts/d3.v3.min.js", charset="utf-8"),
                includeScript("scripts/top-nav-links.js"),
+               includeScript("scripts/selectize.js"),
                includeCSS("css/dendrogram.css"),
                includeCSS("css/slider.css"),
-               includeScript("scripts/dendrogram.js")
+               includeCSS("css/selectize.bootstrap3.css"),
+               includeScript("scripts/dendrogram.js"),
+               includeScript("scripts/select_label.js")
              ),
              theme = shinytheme("spacelab")
   )

@@ -17,9 +17,11 @@ function wrapper(el, data) {
     root;
   
   if(data) { // wait for data to load
-      root = JSON.parse(data);
+      root = JSON.parse(data.data);
       root.x0 = height / 2;
       root.y0 = root.height;
+      
+      console.log(data);
       
       var maxLabelLength = 0;
       var leaves = [];
@@ -28,12 +30,12 @@ function wrapper(el, data) {
 		    if (!d.children && !d._children) {leaves.push(d);}
       }, function(d) {
         if (d.children) {return d.children;}
-		    else if (d._children) {return d._chilren;}
-		    else{return null;}
+		    else if (d._children) {return d._children;}
+		    else {return null;}
       });
       
       
-      var right_label_pad = maxLabelLength*7 + 10,
+      var right_label_pad = maxLabelLength*7 + 12,
           left_label_pad = root.name.length*7 + 10,
           slider_pad = 50,
           width = $(window).width() - margin.right - margin.left;
@@ -110,11 +112,14 @@ function wrapper(el, data) {
           .attr("r", 9)
           .attr("cx", slide_x.range()[0])
           .call(drag.on("drag", zoomed));
-          
-      
       
       // collapse children and draw tree
-      root.children.forEach(function(d, i){ d.children.forEach(function(d, i){ d.children.forEach(collapse); }); });
+      if(data.path) {
+        collapse(root);
+        root = nav_path(data.path, root);
+      } else {
+        root.children.forEach(function(d, i){ d.children.forEach(function(d, i){ d.children.forEach(collapse); }); }); 
+      }
       update(root);
 
   }
@@ -283,6 +288,17 @@ function wrapper(el, data) {
               visit(children[i], visitFn, childrenFn);
           }
       }
+  }
+  
+  function nav_path(path, data) {
+    var path_vec = path.split(",");
+    var dat = data;
+    if(path_vec.length > 0) {
+      dat.children[path_vec[0]].children = dat.children[path_vec[0]]._children;
+      nav_path(path_vec.shift(), dat);
+    } else {
+      return(dat);
+    }
   }
   
 }
