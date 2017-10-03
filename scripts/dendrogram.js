@@ -21,8 +21,6 @@ function wrapper(el, data) {
       root.x0 = height / 2;
       root.y0 = root.height;
       
-      console.log(data);
-      
       var maxLabelLength = 0;
       var leaves = [];
       visit(root, function(d) {
@@ -291,11 +289,28 @@ function wrapper(el, data) {
   }
   
   function nav_path(path, data) {
+    // this function isn't working
+    // what needs to happen is it needs to toggle the _children to children
+    // for those branches that are navigated
+    // trying to do it recursively
+    // right now, there is no actual recursion in the tree.
     var path_vec = path.split(",");
     var dat = data;
     if(path_vec.length > 0) {
-      dat.children[path_vec[0]].children = dat.children[path_vec[0]]._children;
-      nav_path(path_vec.shift(), dat);
+      
+      if(dat._children) {
+        dat.children = dat._children;
+        dat._children = null;
+      }
+      
+      console.log(dat);
+      
+      dat.children[+path_vec[0]].children = dat.children[+path_vec[0]]._children;
+      dat.children[+path_vec[0]]._children = null;
+      
+      var nav_new = path_vec.slice(1);
+      
+      nav_path(nav_new.join(","), dat);
     } else {
       return(dat);
     }
