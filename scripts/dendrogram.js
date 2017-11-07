@@ -116,7 +116,11 @@ function wrapper(el, data) {
         collapse(root);
         root = nav_path(data.path, root);
       } else {
-        root.children.forEach(function(d, i){ d.children.forEach(function(d, i){ d.children.forEach(collapse); }); }); 
+        root.children.forEach(function(d, i){ 
+          d.children.forEach(function(d, i){ 
+            d.children.forEach(collapse); 
+          }); 
+        }); 
       }
       update(root);
 
@@ -235,6 +239,14 @@ function wrapper(el, data) {
     }
   }
   
+  // expand childen nodes (1 level)  
+  function expand(d) {
+    if (d._children) {
+      d.children = d._children;
+      d._children = null;
+    }
+  }
+  
   function zoomed(d) {
     var x_val = slide_x.invert(d3.event.x);
     var right, left;
@@ -243,7 +255,7 @@ function wrapper(el, data) {
     
     if(d3.select(this).attr("class") == "handle max") {
       var min_val = slide_x.invert(handle_min.attr("cx"));
-      if(x_val >= min_val - .005) x_val = min_val - 0.005;
+      if(x_val >= min_val - 0.005) x_val = min_val - 0.005;
       
       // move slider
       handle_max.attr("cx", slide_x(x_val));
@@ -260,7 +272,7 @@ function wrapper(el, data) {
       if(left === max_height) left = max_height - 0.0001;
       
       var max_val = slide_x.invert(handle_max.attr("cx"));
-      if(left <= max_val + .005) left = max_val + 0.005;
+      if(left <= max_val + 0.005) left = max_val + 0.005;
       
       // move slider
       handle_min.attr("cx", slide_x(left));
@@ -288,34 +300,31 @@ function wrapper(el, data) {
       }
   }
   
+  // navigate the tree to a specific value
   function nav_path(path, data) {
-    // this function isn't working
-    // what needs to happen is it needs to toggle the _children to children
-    // for those branches that are navigated
-    // trying to do it recursively
-    // right now, there is no actual recursion in the tree.
     var path_vec = path.split(",");
     var dat = data;
-    if(path_vec.length > 0) {
-      
-      if(dat._children) {
-        dat.children = dat._children;
-        dat._children = null;
-      }
-      
-      console.log(dat);
-      
-      dat.children[+path_vec[0]].children = dat.children[+path_vec[0]]._children;
-      dat.children[+path_vec[0]]._children = null;
-      
-      var nav_new = path_vec.slice(1);
-      
-      nav_path(nav_new.join(","), dat);
-    } else {
-      return(dat);
-    }
+    
+    // expand first level
+    expand(dat);
+
+    //recursively expand the correct children
+    inner_nav(path_vec, dat);
+    
+    return(dat);
+    
   }
   
+  // inner function for nav_path to make recursion happen
+  function inner_nav(path, data) {
+    console.log(path);
+    console.log(data);
+    
+    if (path.length > 1) {
+      expand(data.children[+path[0]]);
+      inner_nav(path.slice(1), data.children[+path[0]]);
+    }
+  }
 }
 
 
