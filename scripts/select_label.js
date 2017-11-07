@@ -29,6 +29,7 @@ Shiny.inputBindings.register(inputBinding);
 function select_wrapper(el, data) {
   
   d3.select(el).select("select").remove();
+  d3.select(el).select(".selectize-control").remove();
   var label_select = d3.select(el)
     .append("select")
       .attr("id", "select-label")
