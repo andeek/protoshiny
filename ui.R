@@ -42,8 +42,7 @@ shinyUI(
                                         verbatimTextOutput("view_data"))
                           ),
                         tabPanel("Visualization", 
-                                 column(12, dynGraph(inputoutputId = 'd3io'), selectJS(inputoutputId = "select_label")),
-                                 column(12, verbatimTextOutput("test"))
+                                 column(12, dynGraph(inputoutputId = 'd3io'), selectJS(inputoutputId = "select_label"))
                                  
                         )
                       )

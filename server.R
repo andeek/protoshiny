@@ -98,10 +98,6 @@ shinyServer(function(input, output) {
     res
   })
   
-  output$test <- renderPrint({
-    input$select_label
-  })
-  
 
   
 })
