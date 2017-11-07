@@ -9,7 +9,7 @@ $.extend(outputBinding, {
 Shiny.outputBindings.register(outputBinding);
 
 function wrapper(el, data) {
-  var margin = {top: 10, bottom: 5, left: 0, right: 10},
+  var margin = {top: 10, bottom: 5, left: 0, right: 20},
       height = $(window).height() - $('.span12').height() - $('.nav-tabs').height() - $('.navbar').height() - margin.bottom - margin.top;
     
   var i = 0,
@@ -33,8 +33,8 @@ function wrapper(el, data) {
       });
       
       
-      var right_label_pad = maxLabelLength*7 + 12,
-          left_label_pad = root.name.length*7 + 10,
+      var right_label_pad = (maxLabelLength + 1)*9,
+          left_label_pad = root.name.length*9,
           slider_pad = 50,
           width = $(window).width() - margin.right - margin.left;
           
