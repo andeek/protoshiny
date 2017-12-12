@@ -5,7 +5,7 @@ For details on hierarchical clustering with prototypes, see http://faculty.bscb.
 
 # Contents
 
-This repo contains the application in the `application/` folder as well as a working paper in the `paper/` folder.
+This repo contains the application in the [application folder](application/) as well as a working paper in the [paper folder](paper/).
 
 # Using the app
 
