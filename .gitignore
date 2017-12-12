@@ -15,3 +15,7 @@ vignettes/*.pdf
 
 # project
 protoshiny.Rproj
+
+# compiled files
+*.pdf
+

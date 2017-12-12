@@ -1,0 +1,18 @@
+---
+title: "Exploring large dendrograms with `protoshiny`"
+author: "Jacob Bien and Andee Kaplan"
+output: 
+  bookdown::pdf_document2:
+    toc: false
+---
+
+# Introduction
+
+## Clustering with prototypes
+
+## Interactive statistical web graphics
+
+# `protoshiny`
+
+# Case studies
+
