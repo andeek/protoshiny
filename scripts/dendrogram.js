@@ -111,7 +111,6 @@ function wrapper(el, data) {
           .attr("cx", slide_x.range()[0])
           .call(drag.on("drag", zoomed));
       
-      console.log(data.path);
       // collapse children and draw tree
       if(data.path) {
         collapse(root);
