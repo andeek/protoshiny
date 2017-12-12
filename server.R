@@ -109,6 +109,12 @@ shinyServer(function(input, output) {
     res
   })
   
+  ## reset button
+  observeEvent(input$reset, {
+    dat <- data()
+    path(NULL)
+  })
+  
 
   
 })

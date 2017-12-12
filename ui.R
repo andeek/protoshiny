@@ -24,6 +24,8 @@ shinyUI(
   navbarPage("protoshiny",
              id="top-nav",
              tabPanel(title="", icon=icon("home", "fa-2x"),
+                      div(style = "position:absolute;right:1em;", 
+                          actionLink('reset', 'Reset')),
                       tabsetPanel(
                         tabPanel("Data",
                                  br(), 
