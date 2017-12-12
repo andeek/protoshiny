@@ -69,6 +69,13 @@ shinyServer(function(input, output) {
     }
   })
   
+  ## make path reactive so that it can reset with the new data
+  path <- reactiveVal(NULL)
+  observeEvent(input$select_label, {
+    path(input$select_label)             
+  })
+  
+  
   ##allow user to choose and view loaded object
   output$objects <- reactive({ 
     obj <- objects()
@@ -88,11 +95,15 @@ shinyServer(function(input, output) {
   ##send data to client side handler
   output$d3io <- reactive({ 
     dat <- protoclust_to_json(data())
-    list(data = dat, path = input$select_label)
+    list(data = dat, path = path())
   })
   
   output$select_label <- reactive({ 
     dat <- data()
+    
+    ## reset path when getting new data/labels
+    path(NULL)
+    
     res <- protoclust::find_elements(dat)
     names(res) <- dat$labels
     res

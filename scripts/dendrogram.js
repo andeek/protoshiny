@@ -111,6 +111,7 @@ function wrapper(el, data) {
           .attr("cx", slide_x.range()[0])
           .call(drag.on("drag", zoomed));
       
+      console.log(data.path);
       // collapse children and draw tree
       if(data.path) {
         collapse(root);
@@ -251,7 +252,6 @@ function wrapper(el, data) {
     var x_val = slide_x.invert(d3.event.x);
     var right, left;
     
-    console.log(x_val);
     
     if(d3.select(this).attr("class") == "handle max") {
       var min_val = slide_x.invert(handle_min.attr("cx"));
@@ -317,9 +317,6 @@ function wrapper(el, data) {
   
   // inner function for nav_path to make recursion happen
   function inner_nav(path, data) {
-    console.log(path);
-    console.log(data);
-    
     if (path.length > 1) {
       expand(data.children[+path[0]]);
       inner_nav(path.slice(1), data.children[+path[0]]);
