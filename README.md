@@ -9,6 +9,8 @@ This repo contains the application in the `application/` folder as well as a wor
 
 # Using the app
 
+![screencap](screencap.png)
+
 After cloning the repo, use the command `shiny::runApp("application/")` to launch the shiny application. From here, either upload your own cluster object or use the provided demo datasets. Click the `Visualization` tab to interact with the dendrogram.
 
 
