@@ -4,9 +4,12 @@ author: "Jacob Bien and Andee Kaplan"
 output: 
   bookdown::pdf_document2:
     toc: false
+bibliography: refs.bib
 ---
 
 # Introduction
+
+[[AK: include information on dendrograms here?]]
 
 ## Clustering with prototypes
 
@@ -14,5 +17,13 @@ output:
 
 # `protoshiny`
 
+`protoshiny` is an interactive web application built using the Shiny framework [@shiny] and the JavaScript library D3 [@bostock2011d3] to interactively visualize hierarchical clustering with prototypes. In agglomerative clustering, a dataset with $n$ records will require $2^n$ merges to create the full dendrogram. One of the benefits of using the minimax linkage in hierarcical clustering is the prototypes is the natural association of a prototype chosen from the original dataset to every interior node of the dendrogram [@bien2011hierarchical], thus increasing interpretability of the clusters. When $n$ is large, this interpretability is difficult to obtain from a static dendrogram due to the size. Thus, the goal of `protoshiny` is to allow the user to experience the full interpretability afforded to them by clustering with prototypes via the use of interactivity.
+
+[[AK: installation/use/access?]]
+
+[[AK: features]]
+
 # Case studies
+
+# References
 
