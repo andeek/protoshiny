@@ -7,6 +7,11 @@ For details on hierarchical clustering with prototypes, see http://faculty.bscb.
 
 This repo contains the application in the [application folder](application/) as well as a working paper in the [paper folder](paper/).
 
+# Installation
+
+1. Install the `shinythemes` package with `install.packages("shinythemes")`.
+2. Clone this repo.
+
 # Using the app
 
 ![screencap](screencap.png)
