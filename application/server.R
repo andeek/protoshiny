@@ -4,7 +4,7 @@
 source("r/helpers.R")
 
 ##list of default data files
-data_sets <- list.files("data/", pattern="*.RData")
+data_sets <- list.files("data/", pattern="*.RData|*.Rdata")
 
 ##function for loading an object into a new environment
 load_obj <- function(file) {

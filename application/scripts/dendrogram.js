@@ -111,16 +111,23 @@ function wrapper(el, data) {
           .attr("cx", slide_x.range()[0])
           .call(drag.on("drag", zoomed));
       
+      
       // collapse children and draw tree
       if(data.path) {
         collapse(root);
         root = nav_path(data.path, root);
       } else {
-        root.children.forEach(function(d, i){ 
-          d.children.forEach(function(d, i){ 
-            d.children.forEach(collapse); 
-          }); 
-        }); 
+        if(root.children) {
+          root.children.forEach(function(d, i){
+            if(d.children) {
+              d.children.forEach(function(d, i){
+                if(d.children) {
+                  d.children.forEach(collapse); 
+                }
+              }); 
+            }
+          });
+        }
       }
       update(root);
 
