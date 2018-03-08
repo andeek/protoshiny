@@ -12,7 +12,7 @@ protoclust_to_json <- function(proto_object) {
   n <- nrow(merge) + 1
   height <- proto_object$height
   protos <- proto_object$protos
-  labels <- proto_object$labels
+  labels <- gsub('\"', '\\\\\\"', as.character(hc$labels)) # try to keep escaped quotes
   
   leaves <- vapply(1:n, 
                    FUN = function(i) return(paste0('{ "name" : "', labels[i], '", "proto" : ', i, ',  "height" : 0 }')),
