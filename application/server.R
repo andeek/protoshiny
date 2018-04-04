@@ -31,7 +31,7 @@ shinyServer(function(input, output) {
   
   ##reactive data object
   objects <- reactive({
-    supported_formats<-c("rdata") ##only accept .RData
+    supported_formats <- c("rdata") ##only accept .RData
     
     if(!is.null(input$dataset)) {
       if(class(input$dataset) == "character") {
@@ -44,6 +44,8 @@ shinyServer(function(input, output) {
     } else { ##data isn't loaded yet
       return()
     }
+    
+
     
     if(tolower(strsplit(name, "\\.")[[1]][2]) %in% supported_formats) { ##check for correct format
       obj <- load_obj(file) #load object into new environment and store
@@ -94,8 +96,11 @@ shinyServer(function(input, output) {
   
   ##send data to client side handler
   output$d3io <- reactive({ 
-    dat <- protoclust_to_json(data())
-    list(data = dat, path = path())
+    obj <- objects()
+    dat <- data()
+    json <- protoclust_to_json(dat)
+    path <- path()
+    list(data = json, path = path)
   })
   
   output$select_label <- reactive({ 
