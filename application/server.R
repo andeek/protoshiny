@@ -49,12 +49,6 @@ shinyServer(function(input, output) {
     
     if(tolower(strsplit(name, "\\.")[[1]][2]) %in% supported_formats) { ##check for correct format
       obj <- load_obj(file) #load object into new environment and store
-#       if("protoclust" %in% class(dataset)) {
-#         return(protoclust_to_json(dataset)) #if data in correct format
-#       } else {
-#         ##TODO: add error handling here
-#         return()   
-#       }
       return(obj)
     } else {
       ##TODO: add error handling here
@@ -86,8 +80,28 @@ shinyServer(function(input, output) {
   
   output$choose_object <- renderUI({
     obj <- objects()
-    selectInput("object", "Choose loaded object", as.list(obj$objects))
+    
+    tagList(
+      selectInput("object", "Choose loaded object", as.list(obj$objects)),
+      radioButtons("label_type", "Choose label type", choices = c("Text" = "text", "Image" = "image")),
+      conditionalPanel(
+        condition = "input.label_type == 'image'",
+        fileInput('images', 'Upload all label images (.png)', accept="image/png", multiple = TRUE)
+      )
+    )
+    
   })
+  
+  
+  ## get img path
+  img_path <- reactiveVal(NULL)
+  observeEvent(input$images, {
+    if(input$label_type == "image") img_path(dirname(input$images$datapath[[1]]))
+  })
+  observeEvent(input$label_type, {
+    if(input$label_type == "text") img_path(NULL)
+  })
+  
   
   output$view_data <- renderPrint({
     dat <- data()
@@ -100,7 +114,8 @@ shinyServer(function(input, output) {
       dat <- data()
       json <- protoclust_to_json(dat)
       pa <- path()
-      list(data = json, path = pa)
+      img_pa <- img_path()
+      list(data = json, path = pa, img_path = img_pa)
     })
   })
   

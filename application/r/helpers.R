@@ -17,6 +17,9 @@ protoclust_to_json <- function(proto_object) {
   leaves <- vapply(1:n, 
                    FUN = function(i) return(paste0('{ "name" : "', labels[i], '", "proto" : ', i, ',  "height" : 0 }')),
                    FUN.VALUE = "character()")
+  
+  image_labels <- "img" %in% names(proto_object)
+  if(image_labels) images <- proto_object$img
   clusters <- character()
   for(i in 1:(n-1)) {
     if(merge[i, 1] < 0) {
@@ -31,7 +34,11 @@ protoclust_to_json <- function(proto_object) {
       b <- clusters[[merge[i,2]]]
       clusters[merge[i,2]] <- NA
     }
-    clusters[i] <- paste0('{ "name" : "', labels[protos[i]], '", "proto" : ', protos[i], ',  "height" : ', height[i], ', "children" : [' , paste(a, b, sep = ", "), ']}')
+    if(image_labels){
+      clusters[i] <- paste0('{ "name" : "', labels[protos[i]], '", "img" : "', images[protos[i]], '", "proto" : ', protos[i], ',  "height" : ', height[i], ', "children" : [' , paste(a, b, sep = ", "), ']}')
+    } else {
+      clusters[i] <- paste0('{ "name" : "', labels[protos[i]], '", "proto" : ', protos[i], ',  "height" : ', height[i], ', "children" : [' , paste(a, b, sep = ", "), ']}')  
+    }
   }
   return(clusters[n-1])
 }

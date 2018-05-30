@@ -37,8 +37,6 @@ function select_wrapper(el, data) {
   
   var first_elm = [['Search for first occurence of label:', []]];
   
-  console.log(first_elm.concat(Object.entries(data)));
-
   var labels = label_select.selectAll("option")
     .data(first_elm.concat(Object.entries(data)));
     

@@ -17,10 +17,12 @@ function wrapper(el, data) {
     root;
   
   if(data) { // wait for data to load
+      
+      console.log(data.img_path);
+      
       root = JSON.parse(data.data);
       root.x0 = height / 2;
       root.y0 = root.height;
-      
       
       var maxLabelLength = 0;
       var leaves = [];
@@ -33,8 +35,6 @@ function wrapper(el, data) {
 		    else {return null;}
       });
       
-      
-      
       var right_label_pad = 100,
           left_label_pad = root.name.length*5 + 10,
           slider_pad = 50,
@@ -43,7 +43,6 @@ function wrapper(el, data) {
 
       var cluster = d3.layout.cluster()
           .size([height - slider_pad - margin.bottom, width - right_label_pad - left_label_pad]);
-
 
       var diagonal = d3.svg.diagonal()
           .projection(function(d) { return [d.y, d.x]; });
@@ -83,7 +82,6 @@ function wrapper(el, data) {
           .attr("x2", slide_x.range()[1])
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
           .attr("class", "track-inset");
-        
           
       slider.append("line")
           .attr("class", "track")
@@ -93,8 +91,6 @@ function wrapper(el, data) {
           .attr("class", "track-middle")
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
           .attr("class", "track-overlay");
-          
-          
         
       slider.insert("g", ".track-overlay")
           .attr("class", "ticks")
@@ -163,12 +159,23 @@ function wrapper(el, data) {
         .attr("r", 1e-6)
         .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
-    nodeEnter.append("text")
+    if(data.img_path) {
+      nodeEnter.append("image")
+        .attr("xlink:href", function(d) { return data.img_path + "/" + d.img; })
+        .attr("x", "-12px")
+        .attr("y", "-12px")
+        .attr("width", "24px")
+        .attr("height", "24px");
+      
+    } else {
+      nodeEnter.append("text")
         .attr("x", function(d) { return d.children || d._children ? -8 : 8; })
         .attr("dy", ".35em")
         .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
         .text(function(d) { return d.name; })
         .style("fill-opacity", 1e-6);
+    }
+
 
     // Transition nodes to their new position.
     var nodeUpdate = node.transition()
