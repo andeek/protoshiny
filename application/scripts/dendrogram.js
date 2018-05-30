@@ -21,7 +21,7 @@ function wrapper(el, data) {
       root.x0 = height / 2;
       root.y0 = root.height;
       
-      /*
+      
       var maxLabelLength = 0;
       var leaves = [];
       visit(root, function(d) {
@@ -32,7 +32,7 @@ function wrapper(el, data) {
 		    else if (d._children) {return d._children;}
 		    else {return null;}
       });
-      */
+      
       
       
       var right_label_pad = 100,
@@ -68,9 +68,12 @@ function wrapper(el, data) {
         .domain([0, max_height])
         .range([width - right_label_pad - left_label_pad, 0]);
       
+      console.log(maxLabelLength - 100);
+      console.log(d3.max([maxLabelLength - 100, 0]));
+      
       // slider scale
       var slide_x = d3.scale.linear()
-        .domain([root.height, 0])
+        .domain([root.height, d3.format(".1n")(-d3.max([maxLabelLength - 100, 0])/100) - 0.1])
         .range([0, width - right_label_pad - left_label_pad])
         .clamp(true);
         
@@ -82,7 +85,13 @@ function wrapper(el, data) {
           .attr("x1", slide_x.range()[0])
           .attr("x2", slide_x.range()[1])
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-          .attr("class", "track-inset")
+          .attr("class", "track-inset");
+        
+          
+      slider.append("line")
+          .attr("class", "track")
+          .attr("x1", slide_x.range()[0])
+          .attr("x2", slide_x(0))
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
           .attr("class", "track-middle")
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
@@ -104,7 +113,7 @@ function wrapper(el, data) {
       var handle_max = slider.append("circle", ".track-overlay")
           .attr("class", "handle max")
           .attr("r", 9)
-          .attr("cx", slide_x.range()[1])
+          .attr("cx", slide_x(0))
           .call(drag.on("drag", zoomed));
           
       var handle_min = slider.append("circle", ".track-overlay")
