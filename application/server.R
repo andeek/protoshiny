@@ -95,20 +95,20 @@ shinyServer(function(input, output) {
   })
   
   ##send data to client side handler
-  output$d3io <- reactive({ 
-    obj <- objects()
-    dat <- data()
-    json <- protoclust_to_json(dat)
-    path <- path()
-    list(data = json, path = path)
+  observe({
+    output$d3io <- reactive({
+      dat <- data()
+      json <- protoclust_to_json(dat)
+      pa <- path()
+      list(data = json, path = pa)
+    })
   })
   
   output$select_label <- reactive({ 
     dat <- data()
-    
+    pa <- path()
     ## reset path when getting new data/labels
-    path(NULL)
-    
+    ## path(NULL)
     res <- protoclust::find_elements(dat)
     names(res) <- dat$labels
     res
@@ -116,7 +116,7 @@ shinyServer(function(input, output) {
   
   ## reset button
   observeEvent(input$reset, {
-    dat <- data()
+    path("reset the image")
     path(NULL)
   })
   
