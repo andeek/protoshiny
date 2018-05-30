@@ -36,6 +36,8 @@ function select_wrapper(el, data) {
       .attr("class", "label");
   
   var first_elm = [['Search for first occurence of label:', []]];
+  
+  console.log(first_elm.concat(Object.entries(data)));
 
   var labels = label_select.selectAll("option")
     .data(first_elm.concat(Object.entries(data)));
@@ -45,7 +47,7 @@ function select_wrapper(el, data) {
     .text(function(d){ return d[0]; });
       
   var $select = $('#select-label').selectize({
-					create: true,
+					create: false,
 					sortField: {
 						field: 'text',
 						direction: 'asc'
