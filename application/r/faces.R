@@ -12,7 +12,7 @@ library(dplyr)
 for(i in seq_len(nrow(faces))) {
   expand.grid(x = 1:64, y = 1:64) %>%
     ggplot() +
-    geom_raster(aes(x = x, y = y, fill = rev(faces[1,]))) +
+    geom_raster(aes(x = x, y = y, fill = rev(faces[i,]))) +
     scale_fill_continuous(low = "black", high = "white") +
     theme_void() +
     theme(legend.position = "hidden", aspect.ratio = 1) +

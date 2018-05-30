@@ -96,7 +96,12 @@ shinyServer(function(input, output) {
   ## get img path
   img_path <- reactiveVal(NULL)
   observeEvent(input$images, {
-    if(input$label_type == "image") img_path(dirname(input$images$datapath[[1]]))
+    if(input$label_type == "image") {
+      pa <- dirname(input$images$datapath[[1]])
+      img_path(pa)
+      addResourcePath('image_labels', pa)
+    }
+    
   })
   observeEvent(input$label_type, {
     if(input$label_type == "text") img_path(NULL)

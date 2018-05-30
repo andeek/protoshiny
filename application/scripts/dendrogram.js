@@ -161,11 +161,11 @@ function wrapper(el, data) {
 
     if(data.img_path) {
       nodeEnter.append("image")
-        .attr("xlink:href", function(d) { return data.img_path + "/" + d.img; })
+        .attr("xlink:href", function(d) { return  "image_labels/" + d.img; })
         .attr("x", "-12px")
         .attr("y", "-12px")
-        .attr("width", "24px")
-        .attr("height", "24px");
+        .attr("width", "50px")
+        .attr("height", "50px");
       
     } else {
       nodeEnter.append("text")

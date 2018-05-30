@@ -14,12 +14,20 @@ protoclust_to_json <- function(proto_object) {
   protos <- proto_object$protos
   labels <- gsub('\"', '\\\\\\"', as.character(proto_object$labels)) # try to keep escaped quotes
   
-  leaves <- vapply(1:n, 
-                   FUN = function(i) return(paste0('{ "name" : "', labels[i], '", "proto" : ', i, ',  "height" : 0 }')),
-                   FUN.VALUE = "character()")
-  
+  ##image labels
   image_labels <- "img" %in% names(proto_object)
   if(image_labels) images <- proto_object$img
+  
+  if(image_labels){
+    leaves <- vapply(1:n, 
+                     FUN = function(i) return(paste0('{ "name" : "', labels[i], '", "img" : "', images[i], '", "proto" : ', i, ',  "height" : 0 }')),
+                     FUN.VALUE = "character()")
+  } else {
+    leaves <- vapply(1:n, 
+                     FUN = function(i) return(paste0('{ "name" : "', labels[i], '", "proto" : ', i, ',  "height" : 0 }')),
+                     FUN.VALUE = "character()")
+  }
+
   clusters <- character()
   for(i in 1:(n-1)) {
     if(merge[i, 1] < 0) {
