@@ -162,8 +162,8 @@ function wrapper(el, data) {
     if(data.img_path) {
       nodeEnter.append("image")
         .attr("xlink:href", function(d) { return  "image_labels/" + d.img; })
-        .attr("x", "-12px")
-        .attr("y", "-12px")
+        .attr("x", "-25px")
+        .attr("y", "-25px")
         .attr("width", "50px")
         .attr("height", "50px");
       
