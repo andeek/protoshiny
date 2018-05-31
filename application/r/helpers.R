@@ -50,3 +50,31 @@ protoclust_to_json <- function(proto_object) {
   }
   return(clusters[n-1])
 }
+
+# from https://github.com/daattali/advanced-shiny/blob/master/upload-file-names/app.R
+# uploaded files are getting renamed
+fixUploadedFilesNames <- function(x) {
+  if (is.null(x)) {
+    return()
+  }
+  oldNames = x$datapath
+  
+  # copy to save location
+  newcopyNames = file.path(dirname(x$datapath),
+                       paste0("copy_", x$name))
+  file.copy(from = oldNames, to = newcopyNames, overwrite = TRUE)
+  
+  # remove old files
+  file.remove(oldNames)
+  
+  # copy to correct location
+  newNames = file.path(dirname(x$datapath),
+                       x$name)
+  file.copy(from = newcopyNames, to = newNames, overwrite = TRUE)
+  
+  # remove copy
+  file.remove(newcopyNames)
+  
+  x$datapath <- newNames
+  x
+}

@@ -3,7 +3,7 @@ library(protoclust)
 
 ## data
 faces <- as.matrix(read.csv("application/data/faces.csv", head = FALSE))
-faces <- t(apply(faces,2,function(xx) as.vector(matrix(xx,64,64,byrow=T))))
+faces <- t(apply(faces,2,function(xx) as.vector(matrix(xx, 64, 64, byrow=T)[, 64:1])))
 
 ## save faces as images
 library(ggplot2)
@@ -12,7 +12,7 @@ library(dplyr)
 for(i in seq_len(nrow(faces))) {
   expand.grid(x = 1:64, y = 1:64) %>%
     ggplot() +
-    geom_raster(aes(x = x, y = y, fill = rev(faces[i,]))) +
+    geom_raster(aes(x = x, y = y, fill = faces[i,])) +
     scale_fill_continuous(low = "black", high = "white") +
     theme_void() +
     theme(legend.position = "hidden", aspect.ratio = 1) +
@@ -27,7 +27,7 @@ for(i in seq_len(nrow(faces))) {
 ## hclust object
 d <- dist(faces)
 hc <- protoclust(d)
-hc$labels <- rep(1:40, each=10)
+# hc$labels <- rep(1:40, each=10)
 
 ## add image labels
 ## in order of data records

@@ -94,17 +94,17 @@ shinyServer(function(input, output) {
   
   
   ## get img path
-  img_path <- reactiveVal(NULL)
+  img_path <- reactiveVal(FALSE)
   observeEvent(input$images, {
     if(input$label_type == "image") {
-      pa <- dirname(input$images$datapath[[1]])
-      img_path(pa)
+      fixed_images <- fixUploadedFilesNames(input$images)
+      pa <- dirname(fixed_images$datapath)[1]
       addResourcePath('image_labels', pa)
+      img_path(TRUE)
     }
-    
   })
   observeEvent(input$label_type, {
-    if(input$label_type == "text") img_path(NULL)
+    if(input$label_type == "text") img_path(FALSE)
   })
   
   
@@ -139,6 +139,8 @@ shinyServer(function(input, output) {
     path("reset the image")
     path(NULL)
   })
+
+
   
 
   
