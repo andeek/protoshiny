@@ -18,8 +18,6 @@ function wrapper(el, data) {
   
   if(data) { // wait for data to load
       
-      console.log(data.img_path);
-      
       root = JSON.parse(data.data);
       root.x0 = height / 2;
       root.y0 = root.height;
@@ -165,7 +163,20 @@ function wrapper(el, data) {
         .attr("x", "-25px")
         .attr("y", "-25px")
         .attr("width", "50px")
-        .attr("height", "50px");
+        .attr("height", "50px")
+        .on("mouseover", function(selected){
+          svg.selectAll("g.node").sort(function(a, b) {
+            if (a.id === selected.id) {
+              return 1;
+            } else {
+              if (b.id === selected.id) {
+                return -1;
+              } else {
+                return 0;
+              }
+            }
+          });
+        });
       
     } else {
       nodeEnter.append("text")
@@ -344,5 +355,12 @@ function wrapper(el, data) {
     }
   }
 }
+
+// bring to front on hover
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
 
 
