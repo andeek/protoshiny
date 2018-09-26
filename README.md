@@ -9,13 +9,13 @@ This repo contains the application in the [application folder](application/).
 
 # Installation
 
-1. Install the `shinythemes` package with `install.packages("shinythemes")`.
-2. Clone this repo.
+1. Clone this repo.
+2. Use the command `shiny::runApp("application/")` to launch the shiny application.
 
 # Using the app
 
 ![screencap](screencap.png)
 
-After cloning the repo, use the command `shiny::runApp("application/")` to launch the shiny application. From here, either upload your own cluster object or use the provided demo datasets. Click the `Visualization` tab to interact with the dendrogram.
+After launching the application, either upload your own cluster object or use the provided demo datasets. Click the `Visualization` tab to interact with the dendrogram.
 
 
