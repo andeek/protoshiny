@@ -37,7 +37,6 @@ function wrapper(el, data) {
           left_label_pad = root.name.length*5 + 10,
           slider_pad = 50,
           width = $(window).width() - margin.right - margin.left;
-          
 
       var cluster = d3.layout.cluster()
           .size([height - slider_pad - margin.bottom, width - right_label_pad - left_label_pad]);
@@ -113,11 +112,20 @@ function wrapper(el, data) {
           .attr("cx", slide_x.range()[0])
           .call(drag.on("drag", zoomed));
       
-      
       // collapse children and draw tree
       if(data.path) {
+        var len = 0;
         collapse(root);
-        root = nav_path(data.path, root);
+        if(typeof data.path == 'string') {
+          // there is only one path to follow
+          console.log(data.path);
+          root = nav_path(data.path, root);
+        } else if(data.path.length === 0) {
+          // dynamic tree cut returns null....
+          // do nothing?
+        } else if(typeof data.path == 'object') {
+          for(i in data.path) root = nav_path(data.path[i], root);
+        }
       } else {
         if(root.children) {
           root.children.forEach(function(d, i){

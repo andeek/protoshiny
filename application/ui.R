@@ -2,6 +2,9 @@
 ### Libraries
 ###
 if(!require(shinythemes)) install.packages("shinythemes")
+if(!require(devtools)) install.packages("devtools")
+if(!require(protoclust)) devtools::install_github("jacobbien/protoclust")
+if(!require(dynamicTreeCut)) install.packages("dynamicTreeCut")
 library(shinythemes)
 
 
