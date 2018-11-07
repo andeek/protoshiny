@@ -65,6 +65,11 @@ shinyServer(function(input, output) {
     }
   })
   
+  labels <- reactive({
+    dat <- data()
+    return(protoclust::find_elements(dat))
+  })
+  
   ## make path reactive so that it can reset with the new data
   path <- reactiveVal(NULL)
   observeEvent(input$select_label, {
@@ -107,7 +112,6 @@ shinyServer(function(input, output) {
     if(input$label_type == "text") img_path(FALSE)
   })
   
-  
   output$view_data <- renderPrint({
     dat <- data()
     str(dat[-length(dat)])
@@ -129,7 +133,8 @@ shinyServer(function(input, output) {
     pa <- path()
     ## reset path when getting new data/labels
     ## path(NULL)
-    res <- protoclust::find_elements(dat)
+    lab <- labels()
+    res <- lab$paths
     names(res) <- dat$labels
     res
   })
