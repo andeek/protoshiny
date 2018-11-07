@@ -85,6 +85,8 @@ shinyServer(function(input, output) {
       
       # nodes to expand
       path(lapply(lab$int_paths[out == -1], function(x) paste(x, collapse = ",")))
+    } else {
+      path(NULL)
     }
   })
   
