@@ -142,6 +142,11 @@ shinyServer(function(input, output) {
     str(dat[-length(dat)])
   })
   
+  ## preview number of initial nodes
+  output$number_clusters <- renderPrint({
+    path <- path()
+  })
+  
   ##send data to client side handler
   observe({
     output$d3io <- reactive({
