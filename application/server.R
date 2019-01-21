@@ -73,6 +73,8 @@ shinyServer(function(input, output) {
   
   ## update path if dynamic treecut is used
   observeEvent(c(input$init_type, input$min_module_size_denom), {
+    req(input$input_type, input$min_module_size_denom)
+    
     if(input$init_type == 'dynamic') {
       dat <- data()
       lab <- labels()
