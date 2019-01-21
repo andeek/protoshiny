@@ -145,6 +145,8 @@ shinyServer(function(input, output) {
   
   ## preview number of initial nodes
   output$number_clusters <- renderTable({
+    req(input$init_type)
+    
     if(input$init_type == 'dynamic') {
       dat <- data()
       n <- length(dat$labels)
