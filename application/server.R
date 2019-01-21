@@ -72,17 +72,16 @@ shinyServer(function(input, output) {
   path <- reactiveVal(NULL)
   
   ## update path if dynamic treecut is used
-  observeEvent(c(input$init_type, input$min_module_size_denom), {
-    req(input$input_type, input$min_module_size_denom)
+  observeEvent(c(input$init_type, input$min_module_size), {
+    req(input$input_type, input$min_module_size)
     
     if(input$init_type == 'dynamic') {
       dat <- data()
       lab <- labels()
-      n <-  length(lab$paths)
       d <- input$min_module_size_denom
       
       # get dynamic cuts
-      dc <- dynamicTreeCut::cutreeDynamicTree(dat, minModuleSize = n/d)
+      dc <- dynamicTreeCut::cutreeDynamicTree(dat, minModuleSize = d)
       out <- get_nodes_to_expand_info(dat, dc)
       
       # nodes to expand
@@ -118,7 +117,7 @@ shinyServer(function(input, output) {
       radioButtons("init_type", "Choose initial display type", choices = c("Default" = "default", "Dynamic Cut" = "dynamic")),
       conditionalPanel(
         condition = "input.init_type == 'dynamic'",
-        numericInput('min_module_size_denom', 'Specify minimum module size parameter (n/value)', min = 1, value = 40)
+        numericInput('min_module_size', 'Specify minimum module size parameter', min = 1, value = 40)
       )
     )
     
@@ -145,8 +144,19 @@ shinyServer(function(input, output) {
   })
   
   ## preview number of initial nodes
-  output$number_clusters <- renderPrint({
-    path <- path()
+  output$number_clusters <- renderTable({
+    if(input$init_type == 'dynamic') {
+      dat <- data()
+      n <- length(dat$labels)
+      d <- 1:10*5
+
+      # get dynamic cuts
+      num_init <- unlist(lapply(d, function(i) length(table(dynamicTreeCut::cutreeDynamicTree(dat, minModuleSize = i)))))
+      
+      data.frame(minModuleSize = d, `number clusters` = num_init)
+    } else {
+      data.frame(minModuleSize = NULL, `number clusters` = NULL)
+    }
   })
   
   ##send data to client side handler

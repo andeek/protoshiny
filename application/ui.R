@@ -46,7 +46,7 @@ shinyUI(
                                         )),
                                  column(4,
                                         verbatimTextOutput("view_data"),
-                                        verbatimTextOutput("number_clusters"))
+                                        tableOutput("number_clusters"))
                           ),
                         tabPanel("Visualization", 
                                  column(12, dynGraph(inputoutputId = 'd3io'), selectJS(inputoutputId = "select_label"))
