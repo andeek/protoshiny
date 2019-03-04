@@ -29,6 +29,26 @@ shinyServer(function(input, output) {
            
   })
   
+  ## dynamic UI
+  output$choose_object <- renderUI({
+    obj <- objects()
+    
+    tagList(
+      selectInput("object", "Choose loaded object", as.list(obj$objects)),
+      radioButtons("label_type", "Choose label type", choices = c("Text" = "text", "Image" = "image")),
+      conditionalPanel(
+        condition = "input.label_type == 'image'",
+        fileInput('images', 'Upload all label images (.png)', accept="image/png", multiple = TRUE)
+      ),
+      radioButtons("init_type", "Choose initial display type", choices = c("Default" = "default", "Dynamic Cut" = "dynamic")),
+      conditionalPanel(
+        condition = "input.init_type == 'dynamic'",
+        numericInput('min_module_size', 'Specify minimum module size parameter', min = 1, value = 40)
+      )
+    )
+    
+  })
+  
   ##reactive data object
   objects <- reactive({
     supported_formats <- c("rdata") ##only accept .RData
@@ -53,7 +73,6 @@ shinyServer(function(input, output) {
       return()
     }
   })
-  
   data <- reactive({
     obj <- objects()
     if(!is.null(input$object)) {
@@ -62,7 +81,6 @@ shinyServer(function(input, output) {
       return()
     }
   })
-  
   labels <- reactive({
     dat <- data()
     return(protoclust::find_elements(dat))
@@ -72,13 +90,13 @@ shinyServer(function(input, output) {
   path <- reactiveVal(NULL)
   
   ## update path if dynamic treecut is used
-  observeEvent(c(input$init_type, input$min_module_size), {
-    req(input$input_type, input$min_module_size)
+  observeEvent({input$init_type; input$min_module_size}, {
+    req(input$init_type, input$min_module_size)
     
     if(input$init_type == 'dynamic') {
       dat <- data()
       lab <- labels()
-      d <- input$min_module_size_denom
+      d <- input$min_module_size
       
       # get dynamic cuts
       dc <- dynamicTreeCut::cutreeDynamicTree(dat, minModuleSize = d)
@@ -90,7 +108,7 @@ shinyServer(function(input, output) {
       path(NULL)
     }
   })
-  
+
   ## updates path based on the search functionality
   observeEvent(input$select_label, {
     path(input$select_label)             
@@ -101,26 +119,6 @@ shinyServer(function(input, output) {
   output$objects <- reactive({ 
     obj <- objects()
     obj$objects
-  })
-  
-  ## dynamic UI
-  output$choose_object <- renderUI({
-    obj <- objects()
-    
-    tagList(
-      selectInput("object", "Choose loaded object", as.list(obj$objects)),
-      radioButtons("label_type", "Choose label type", choices = c("Text" = "text", "Image" = "image")),
-      conditionalPanel(
-        condition = "input.label_type == 'image'",
-        fileInput('images', 'Upload all label images (.png)', accept="image/png", multiple = TRUE)
-      ),
-      radioButtons("init_type", "Choose initial display type", choices = c("Default" = "default", "Dynamic Cut" = "dynamic")),
-      conditionalPanel(
-        condition = "input.init_type == 'dynamic'",
-        numericInput('min_module_size', 'Specify minimum module size parameter', min = 1, value = 40)
-      )
-    )
-    
   })
   
   ## get img path
@@ -151,7 +149,7 @@ shinyServer(function(input, output) {
       dat <- data()
       n <- length(dat$labels)
       d <- 1:10*5
-
+      
       # get dynamic cuts
       num_init <- unlist(lapply(d, function(i) length(table(dynamicTreeCut::cutreeDynamicTree(dat, minModuleSize = i)))))
       
