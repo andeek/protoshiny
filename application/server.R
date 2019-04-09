@@ -147,18 +147,19 @@ shinyServer(function(input, output) {
     
     if(input$init_type == 'dynamic') {
       dat <- data()
-      n <- length(dat$labels)
       height <- quantile(dat$height, .1)
       range <- c(2, 4)
       
       # get dynamic cuts
-      num_init <- unlist(lapply(range, function(i) length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i)))))
+      cuts <- lapply(range, function(i) dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i))
+      num_init <- unlist(lapply(cuts, function(x) length(unique(x))))
       
       # course jumps
       counter <- 0 # make sure this doesn't go forever
       while(num_init[2] > 1 & counter < 10) {
         range[2] <- range[2] + 20
-        num_init[2] <- length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])))
+        cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
+        num_init[2] <- length(unique(cuts[[2]]))
         counter <- counter + 1
       }
       
@@ -166,7 +167,8 @@ shinyServer(function(input, output) {
       counter <- 0 # make sure this doesn't go forever
       while(num_init[2] == 1 & counter < 10) {
         range[2] <- (range[2] - range[1])/2
-        num_init[2] <- length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])))
+        cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
+        num_init[2] <- length(unique(cuts[[2]]))
         counter <- counter + 1
       }
       
@@ -174,16 +176,22 @@ shinyServer(function(input, output) {
       counter <- 0 # make sure this doesn't go forever
       while(num_init[2] > 1 & counter < 10) {
         range[2] <- range[2] + 2
-        num_init[2] <- length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])))
+        cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
+        num_init[2] <- length(unique(cuts[[2]]))
         counter <- counter + 1
       }
       
       d <- unique(round(seq(from = range[1], to = range[2], length.out = 6)))
-      num_init_inner <- unlist(lapply(d[-c(1, length(d))], function(i) length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i)))))
+      cuts_inner <- lapply(d[-c(1, length(d))], function(i) dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i))
+      num_init_inner <- unlist(lapply(cuts_inner, function(x) length(unique(x))))
       
-      data.frame(minModuleSize = d, `number clusters` = c(num_init[1], num_init_inner, num_init[2]))
+      outs <- lapply(c(list(cuts[[1]]), cuts_inner, list(cuts[[2]])), function(cuts) get_nodes_to_expand_info(dat, cuts))
+      
+      res <- data.frame(minModuleSize = d, `number clusters` = c(num_init[1], num_init_inner, num_init[2]) - 1, 
+                        `approx nodes` = unlist(lapply(outs, function(x) sum(x < -1)))*2 + unlist(lapply(outs, function(x) sum(x == -1))))
+      apply(res, 2, as.character)
     } else {
-      data.frame(minModuleSize = NULL, `number clusters` = NULL)
+      data.frame(minModuleSize = NULL, `number clusters` = NULL, `number inner nodes` = NULL)
     }
   })
   
