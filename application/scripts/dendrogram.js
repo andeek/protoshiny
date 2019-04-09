@@ -118,7 +118,6 @@ function wrapper(el, data) {
         collapse(root);
         if(typeof data.path == 'string') {
           // there is only one path to follow
-          // console.log(data.path);
           root = nav_path(data.path, root);
         } else if(data.path.length === 0) {
           // dynamic tree cut returns null....
@@ -192,8 +191,6 @@ function wrapper(el, data) {
         .attr("dy", ".35em")
         .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
         .text(function(d) { 
-          
-          console.log(d); 
           
           if(d.parent) {
             // not the root

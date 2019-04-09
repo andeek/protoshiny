@@ -97,9 +97,10 @@ shinyServer(function(input, output) {
       dat <- data()
       lab <- labels()
       d <- input$min_module_size
+      height <- quantile(dat$height, .1)
       
       # get dynamic cuts
-      dc <- dynamicTreeCut::cutreeDynamicTree(dat, minModuleSize = d)
+      dc <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = d)
       out <- get_nodes_to_expand_info(dat, dc)
       
       # nodes to expand
@@ -113,7 +114,6 @@ shinyServer(function(input, output) {
   observeEvent(input$select_label, {
     path(input$select_label)             
   })
-  
   
   ## allow user to choose and view loaded object
   output$objects <- reactive({ 
@@ -148,12 +148,40 @@ shinyServer(function(input, output) {
     if(input$init_type == 'dynamic') {
       dat <- data()
       n <- length(dat$labels)
-      d <- 1:10*5
+      height <- quantile(dat$height, .1)
+      range <- c(2, 4)
       
       # get dynamic cuts
-      num_init <- unlist(lapply(d, function(i) length(table(dynamicTreeCut::cutreeDynamicTree(dat, minModuleSize = i)))))
+      num_init <- unlist(lapply(range, function(i) length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i)))))
       
-      data.frame(minModuleSize = d, `number clusters` = num_init)
+      # course jumps
+      counter <- 0 # make sure this doesn't go forever
+      while(num_init[2] > 1 & counter < 10) {
+        range[2] <- range[2] + 20
+        num_init[2] <- length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])))
+        counter <- counter + 1
+      }
+      
+      # half steps
+      counter <- 0 # make sure this doesn't go forever
+      while(num_init[2] == 1 & counter < 10) {
+        range[2] <- (range[2] - range[1])/2
+        num_init[2] <- length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])))
+        counter <- counter + 1
+      }
+      
+      # small jumps
+      counter <- 0 # make sure this doesn't go forever
+      while(num_init[2] > 1 & counter < 10) {
+        range[2] <- range[2] + 2
+        num_init[2] <- length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])))
+        counter <- counter + 1
+      }
+      
+      d <- unique(round(seq(from = range[1], to = range[2], length.out = 6)))
+      num_init_inner <- unlist(lapply(d[-c(1, length(d))], function(i) length(table(dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i)))))
+      
+      data.frame(minModuleSize = d, `number clusters` = c(num_init[1], num_init_inner, num_init[2]))
     } else {
       data.frame(minModuleSize = NULL, `number clusters` = NULL)
     }
@@ -187,9 +215,4 @@ shinyServer(function(input, output) {
     path("reset the image")
     path(NULL)
   })
-
-
-  
-
-  
 })
