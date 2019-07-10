@@ -6,7 +6,9 @@ if(!require(devtools)) install.packages("devtools")
 if(!require(protoclust)) devtools::install_github("jacobbien/protoclust")
 if(!require(dynamicTreeCut)) install.packages("dynamicTreeCut")
 if(!require(DT)) install.packages("DT")
+if(!require(shinycssloaders)) install.packages("shinycssloaders")
 library(shinythemes)
+library(shinycssloaders)
 
 
 ###
@@ -51,7 +53,8 @@ shinyUI(
                                         )
                           ),
                         tabPanel("Visualization", 
-                                 column(12, dynGraph(inputoutputId = 'd3io'), selectJS(inputoutputId = "select_label"))
+                                 column(12, withSpinner(dynGraph(inputoutputId = 'd3io'),  type=7), 
+                                                        selectJS(inputoutputId = "select_label"))
                                  
                         )
                       )

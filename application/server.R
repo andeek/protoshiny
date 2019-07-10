@@ -53,7 +53,7 @@ shinyServer(function(input, output, session) {
   output$table_output <- renderUI({
     conditionalPanel(
       condition = "input.init_type == 'dynamic'",
-      DT::DTOutput("number_clusters"),
+      withSpinner(DT::DTOutput("number_clusters"), type=7),
       p("We recommend you start looking at the dendrogram with as close to 50 nodes on the screen as possible. Choose the minModuleSize parameter (left) with the value that results in your desired number of approximate nodes.")
     )
   })
