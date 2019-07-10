@@ -17,7 +17,7 @@ load_obj <- function(file) {
 ###
 ### Server Definition
 ###
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   
   ##display preloaded data sets
   output$choose_dataset <- renderUI({
@@ -26,8 +26,9 @@ shinyServer(function(input, output) {
     } else {
       return(selectInput("dataset", "Data set", as.list(data_sets)))
     }
-           
+    
   })
+  
   
   ## dynamic UI
   output$choose_object <- renderUI({
@@ -43,11 +44,20 @@ shinyServer(function(input, output) {
       radioButtons("init_type", "Choose initial display type", choices = c("Default" = "default", "Dynamic Cut" = "dynamic")),
       conditionalPanel(
         condition = "input.init_type == 'dynamic'",
-        numericInput('min_module_size', 'Specify minimum module size parameter', min = 1, value = 40)
+        numericInput('min_module_size', 'Specify minimum module size parameter (minModuleSize)', min = 1, value = 2),
+        p("minModuleSize parameter controls the number of starting nodes in the dendrogram. See table to the right for suggested value in red.")
       )
     )
-    
   })
+  
+  output$table_output <- renderUI({
+    conditionalPanel(
+      condition = "input.init_type == 'dynamic'",
+      DT::DTOutput("number_clusters"),
+      p("We recommend you start looking at the dendrogram with as close to 50 nodes on the screen as possible. Choose the minModuleSize parameter (left) with the value that results in your desired number of approximate nodes.")
+    )
+  })
+  
   
   ##reactive data object
   objects <- reactive({
@@ -109,17 +119,20 @@ shinyServer(function(input, output) {
       path(NULL)
     }
   })
-
+  
+  
   ## updates path based on the search functionality
   observeEvent(input$select_label, {
     path(input$select_label)             
   })
+  
   
   ## allow user to choose and view loaded object
   output$objects <- reactive({ 
     obj <- objects()
     obj$objects
   })
+  
   
   ## get img path
   img_path <- reactiveVal(FALSE)
@@ -135,14 +148,16 @@ shinyServer(function(input, output) {
     if(input$label_type == "text") img_path(FALSE)
   })
   
+  
   ## preview loaded objects
   output$view_data <- renderPrint({
     dat <- data()
     str(dat[-length(dat)])
   })
   
+  
   ## preview number of initial nodes
-  output$number_clusters <- renderTable({
+  output$number_clusters <- DT::renderDT({
     req(input$init_type)
     
     if(input$init_type == 'dynamic') {
@@ -189,11 +204,28 @@ shinyServer(function(input, output) {
       
       res <- data.frame(minModuleSize = d, `number clusters` = c(num_init[1], num_init_inner, num_init[2]) - 1, 
                         `approx nodes` = unlist(lapply(outs, function(x) sum(x < -1)))*2 + unlist(lapply(outs, function(x) sum(x == -1))))
-      apply(res, 2, as.character)
+      
+      best_idx <- abs(res[res[, 3] > 0, 3] - 50) == min(abs(res[res[, 3] > 0, 3] - 50))
+      best_val <- res[best_idx, 3]
+      other_vals <- setdiff(res[, 3], best_val)
+      
+      updateNumericInput(session, "min_module_size", value = min(d[best_idx]))
+      
+      res_table <- DT::datatable(res, options = list(dom = 't'), rownames = FALSE)
+      
+      DT::formatStyle(res_table,
+                      3, target = 'row',
+                      fontWeight = DT::styleEqual(c(other_vals, best_val), c(rep("normal", length(other_vals)), rep("bold", length(best_val)))),
+                      color = DT::styleEqual(c(other_vals, best_val), c(rep("#666666", length(other_vals)), rep("red", length(best_val)))))
+      
     } else {
-      data.frame(minModuleSize = NULL, `number clusters` = NULL, `number inner nodes` = NULL)
+      DT::datatable(data.frame(minModuleSize = NULL, `number clusters` = NULL, `number inner nodes` = NULL),
+                    options = list(dom = 't'),
+                    rownames = FALSE)
     }
   })
+  
+  
   
   ##send data to client side handler
   observe({
@@ -206,6 +238,7 @@ shinyServer(function(input, output) {
     })
   })
   
+  
   ## search box labels
   output$select_label <- reactive({ 
     dat <- data()
@@ -217,6 +250,7 @@ shinyServer(function(input, output) {
     names(res) <- dat$labels
     res
   })
+  
   
   ## reset button
   observeEvent(input$reset, {

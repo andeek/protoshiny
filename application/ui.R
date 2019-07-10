@@ -5,6 +5,7 @@ if(!require(shinythemes)) install.packages("shinythemes")
 if(!require(devtools)) install.packages("devtools")
 if(!require(protoclust)) devtools::install_github("jacobbien/protoclust")
 if(!require(dynamicTreeCut)) install.packages("dynamicTreeCut")
+if(!require(DT)) install.packages("DT")
 library(shinythemes)
 
 
@@ -46,7 +47,8 @@ shinyUI(
                                         )),
                                  column(4,
                                         verbatimTextOutput("view_data"),
-                                        tableOutput("number_clusters"))
+                                        uiOutput("table_output")
+                                        )
                           ),
                         tabPanel("Visualization", 
                                  column(12, dynGraph(inputoutputId = 'd3io'), selectJS(inputoutputId = "select_label"))
