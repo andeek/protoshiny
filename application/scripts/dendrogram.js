@@ -171,6 +171,7 @@ function wrapper(el, data) {
         .attr("y", "-25px")
         .attr("width", "50px")
         .attr("height", "50px")
+        .attr("class", function(d) {return d._children ? "label-child" : "label-nochild";})
         .on("mouseover", function(selected){
           svg.selectAll("g.node").sort(function(a, b) {
             if (a.id === selected.id) {

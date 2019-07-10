@@ -29,6 +29,11 @@
   stroke-width: 1.5px;
 }
 
+.label-child {
+  outline-width: thin;
+  outline-style: solid;
+  outline-color: steelblue;
+}
 
 .selectize-input {
   max-width: 300px;
