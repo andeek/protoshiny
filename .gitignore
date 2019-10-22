@@ -19,3 +19,5 @@ protoshiny.Rproj
 # compiled files
 *.pdf
 
+# apple file
+.DS_Store

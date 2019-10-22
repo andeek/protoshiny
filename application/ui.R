@@ -38,17 +38,22 @@ shinyUI(
                                  br(), 
                                  column(4, 
                                         wellPanel(
-                                          selectizeInput("upload", "Data source", choices = list("Preloaded" = FALSE, "Upload user data" = TRUE)),
+                                          helpText("[TODO] Add help text about data upload."),
+                                          selectizeInput("upload", 
+                                                         HTML("Data source", as.character(actionLink("help_source", icon("info-circle")))), 
+                                                         choices = list("Preloaded" = FALSE, "Upload user data" = TRUE)),
                                           uiOutput("choose_dataset")
                                         )
                                       ),
                                  column(4, 
                                         wellPanel(
+                                          helpText("[TODO] Add help text about object selection."),
                                           verbatimTextOutput("objects"),
                                           uiOutput("choose_object")
                                         )),
                                  column(4,
-                                        verbatimTextOutput("view_data"),
+                                        # verbatimTextOutput("view_data"),
+                                        helpText("[TODO] Add help text about third column."),
                                         uiOutput("table_output")
                                         )
                           ),

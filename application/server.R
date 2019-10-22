@@ -22,9 +22,14 @@ shinyServer(function(input, output, session) {
   ##display preloaded data sets
   output$choose_dataset <- renderUI({
     if(input$upload) {
-      return(fileInput('dataset', 'Choose protoclust data object (.RData)', accept="application/x-RData"))
+      return(list(helpText("[TODO] Add help text about uploading data."), 
+               fileInput('dataset', 
+                         HTML('Choose protoclust object', as.character(actionLink("help_dataset_upload", icon("info-circle")))),
+                         accept="application/x-RData")))
     } else {
-      return(selectInput("dataset", "Data set", as.list(data_sets)))
+      return(selectInput("dataset", 
+                         HTML("Data set", as.character(actionLink("help_dataset_preload", icon("info-circle")))),
+                         as.list(data_sets)))
     }
     
   })
@@ -35,17 +40,28 @@ shinyServer(function(input, output, session) {
     obj <- objects()
     
     tagList(
-      selectInput("object", "Choose loaded object", as.list(obj$objects)),
-      radioButtons("label_type", "Choose label type", choices = c("Text" = "text", "Image" = "image")),
+      selectInput("object", 
+                  HTML("Choose loaded object", as.character(actionLink("help_object", icon("info-circle")))),
+                  as.list(obj$objects)),
+      radioButtons("label_type", 
+                   HTML("Choose label type", as.character(actionLink("help_label", icon("info-circle")))),
+                   choices = c("Text" = "text", "Image" = "image")),
       conditionalPanel(
         condition = "input.label_type == 'image'",
-        fileInput('images', 'Upload all label images (.png)', accept="image/png", multiple = TRUE)
+        fileInput('images', 
+                  HTML('Upload all label images (.png)', as.character(actionLink("help_label_image", icon("info-circle")))),
+                  accept="image/png", multiple = TRUE)
       ),
-      radioButtons("init_type", "Choose initial display type", choices = c("Default" = "default", "Dynamic Cut" = "dynamic")),
+      radioButtons("init_type", 
+                   HTML("Choose initial display type", as.character(actionLink("help_init", icon("info-circle")))),
+                   choices = c("Default" = "default", "Dynamic Cut" = "dynamic")),
       conditionalPanel(
         condition = "input.init_type == 'dynamic'",
-        numericInput('min_module_size', 'Specify minimum module size parameter (minModuleSize)', min = 1, value = 2),
-        p("minModuleSize parameter controls the number of starting nodes in the dendrogram. See table to the right for suggested value in red.")
+        numericInput('min_module_size', 
+                     HTML('Specify minimum module size parameter (minModuleSize)', as.character(actionLink("help_minmodulesize", icon("info-circle")))),
+                     min = 1, 
+                     value = 2),
+        helpText("minModuleSize parameter controls the number of starting nodes in the dendrogram. See table to the right for suggested value in red.")
       )
     )
   })
@@ -54,10 +70,82 @@ shinyServer(function(input, output, session) {
     conditionalPanel(
       condition = "input.init_type == 'dynamic'",
       withSpinner(DT::DTOutput("number_clusters"), type=7),
-      p("We recommend you start looking at the dendrogram with as close to 50 nodes on the screen as possible. Choose the minModuleSize parameter (left) with the value that results in your desired number of approximate nodes.")
+      helpText("We recommend you start looking at the dendrogram with as close to 50 nodes on the screen as possible. Choose the minModuleSize parameter (left) with the value that results in your desired number of approximate nodes.")
     )
   })
   
+  ## help buttons
+  observeEvent(input$help_source, {
+    showModal(modalDialog(
+      "[TODO] Help with data source.",
+      easyClose = TRUE,
+      footer = NULL,
+      size = "s"
+    ))
+  })
+  
+  observeEvent(input$help_dataset_upload, {
+    showModal(modalDialog(
+      "[TODO] Help with data upload.",
+      easyClose = TRUE,
+      footer = NULL,
+      size = "s"
+    ))
+  })
+  
+  observeEvent(input$help_dataset_preload, {
+    showModal(modalDialog(
+      "[TODO] Help with data preloaded.",
+      easyClose = TRUE,
+      footer = NULL,
+      size = "s"
+    ))
+  })
+  
+  observeEvent(input$help_object, {
+    showModal(modalDialog(
+      "[TODO] Help with object selection.",
+      easyClose = TRUE,
+      footer = NULL,
+      size = "s"
+    ))
+  })
+  
+  observeEvent(input$help_label, {
+    showModal(modalDialog(
+      "[TODO] Help with label types.",
+      easyClose = TRUE,
+      footer = NULL,
+      size = "s"
+    ))
+  })
+  
+  observeEvent(input$help_label_image, {
+    showModal(modalDialog(
+      "[TODO] Help with image label upload.",
+      easyClose = TRUE,
+      footer = NULL,
+      size = "s"
+    ))
+  })
+  
+  observeEvent(input$help_init, {
+    showModal(modalDialog(
+      "[TODO] Help with initial view.",
+      easyClose = TRUE,
+      footer = NULL,
+      size = "s"
+    ))
+  })
+  
+  observeEvent(input$help_minmodulesize, {
+    showModal(modalDialog(
+      "[TODO] Help with min module size.",
+      easyClose = TRUE,
+      footer = NULL,
+      size = "s"
+    ))
+  })
   
   ##reactive data object
   objects <- reactive({
@@ -150,10 +238,10 @@ shinyServer(function(input, output, session) {
   
   
   ## preview loaded objects
-  output$view_data <- renderPrint({
-    dat <- data()
-    str(dat[-length(dat)])
-  })
+  # output$view_data <- renderPrint({
+  #   dat <- data()
+  #   str(dat[-length(dat)])
+  # })
   
   
   ## preview number of initial nodes
