@@ -38,18 +38,39 @@ shinyUI(
                                  br(), 
                                  column(4, 
                                         wellPanel(
-                                          helpText("[TODO] Add help text about data upload."),
+                                          tags$b("Protoshiny"), 
+                                          "is a Shiny app for interactive",
+                                          "visualization of",
+                                          a("hierarchical clustering with prototypes.", 
+                                            href = "http://faculty.marshall.usc.edu/Jacob-Bien/papers/jasa2011minimax.pdf"),
+                                          br(),
+                                          br(),
+                                          tags$b("Step 1:"),
+                                          "Choose a preloaded example or upload your own",
+                                          a("protoclust object", 
+                                            href = "https://github.com/jacobbien/protoclust"),
+                                          "(then make sure the protoclust object is the chosen 'loaded object' from the .Rdata file).",
+                                          br(),
+                                          tags$b("Step 2:"),
+                                          "(optional) If image labels are desired, change 'label type' to 'Image'.",
+                                          "Also, choose whether to automate initial view of tree.",
+                                          br(),
+                                          tags$b("Step 3:"),
+                                          "Click on the 'Visualization' tab."),
+                                        wellPanel(
                                           selectizeInput("upload", 
                                                          HTML("Data source", as.character(actionLink("help_source", icon("info-circle")))), 
                                                          choices = list("Preloaded" = FALSE, "Upload user data" = TRUE)),
-                                          uiOutput("choose_dataset")
+                                          uiOutput("choose_dataset"),
+                                          #helpText("[TODO] Add help text about object selection."),
+                                          #verbatimTextOutput("objects"),
+                                          uiOutput("choose_object")
+                                          
                                         )
                                       ),
                                  column(4, 
                                         wellPanel(
-                                          helpText("[TODO] Add help text about object selection."),
-                                          verbatimTextOutput("objects"),
-                                          uiOutput("choose_object")
+                                          uiOutput("choose_display_options")
                                         )),
                                  column(4,
                                         # verbatimTextOutput("view_data"),

@@ -22,9 +22,11 @@ shinyServer(function(input, output, session) {
   ##display preloaded data sets
   output$choose_dataset <- renderUI({
     if(input$upload) {
-      return(list(helpText("[TODO] Add help text about uploading data."), 
+      return(list(helpText("Use the",
+                           a("protoclust", href = "https://github.com/jacobbien/protoclust"),
+                           "app to create a protoclust object and save it to a .Rdata file."), 
                fileInput('dataset', 
-                         HTML('Choose protoclust object', as.character(actionLink("help_dataset_upload", icon("info-circle")))),
+                         'Choose .Rdata file with protoclust object',
                          accept="application/x-RData")))
     } else {
       return(selectInput("dataset", 
@@ -38,11 +40,33 @@ shinyServer(function(input, output, session) {
   ## dynamic UI
   output$choose_object <- renderUI({
     obj <- objects()
-    
+    if (!is.null(obj)) {
+      ii <- as.numeric(which(sapply(obj$env, 
+                                    function(o) class(o)[1] == "protoclust")))
+      if (length(ii) == 0)
+        stop(".Rdata file must have a protoclust object.")
+      #else if (length(ii) == 1) {
+        # can we skip this control and just set input$object to ii?
+      #}
+      # else if (length(ii) > 1) {
+      else if (length(ii) >= 1) {
+        tagList(
+          helpText("Choose the protoclust object to visualize."),
+          verbatimTextOutput("objects"),
+          selectInput("object",
+                      HTML("Choose loaded object", as.character(actionLink("help_object", icon("info-circle")))),
+                      as.list(obj$objects))
+        )
+      }
+    }
+  })
+  
+  output$choose_display_options <- renderUI({
+    #obj <- objects()
     tagList(
-      selectInput("object", 
-                  HTML("Choose loaded object", as.character(actionLink("help_object", icon("info-circle")))),
-                  as.list(obj$objects)),
+      # selectInput("object", 
+      #             HTML("Choose loaded object", as.character(actionLink("help_object", icon("info-circle")))),
+      #             as.list(obj$objects)),
       radioButtons("label_type", 
                    HTML("Choose label type", as.character(actionLink("help_label", icon("info-circle")))),
                    choices = c("Text" = "text", "Image" = "image")),
@@ -77,16 +101,7 @@ shinyServer(function(input, output, session) {
   ## help buttons
   observeEvent(input$help_source, {
     showModal(modalDialog(
-      "[TODO] Help with data source.",
-      easyClose = TRUE,
-      footer = NULL,
-      size = "s"
-    ))
-  })
-  
-  observeEvent(input$help_dataset_upload, {
-    showModal(modalDialog(
-      "[TODO] Help with data upload.",
+      "Choose 'Upload user data' to upload your own .Rdata file.",
       easyClose = TRUE,
       footer = NULL,
       size = "s"
@@ -95,7 +110,7 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$help_dataset_preload, {
     showModal(modalDialog(
-      "[TODO] Help with data preloaded.",
+      "Choose one of the example data sets.",
       easyClose = TRUE,
       footer = NULL,
       size = "s"
@@ -104,7 +119,7 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$help_object, {
     showModal(modalDialog(
-      "[TODO] Help with object selection.",
+      "Choose which protoclust object to visualize.",
       easyClose = TRUE,
       footer = NULL,
       size = "s"
@@ -113,7 +128,18 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$help_label, {
     showModal(modalDialog(
-      "[TODO] Help with label types.",
+      "Labels appear at each node of the tree.",
+      "For interior nodes, the label of the prototype is shown;",
+      "for leaf nodes, the label of the leaf is shown. The labels can be",
+      "either text or images.",
+      br(),
+      br(),
+      tags$b("Text labels:"),
+      "These are taken from the protoclust object's 'labels' character vector.",
+      br(),
+      br(),
+      tags$b("Image labels:"),
+      "The file name of each image is given by the protoclust object's 'img' character vector.",
       easyClose = TRUE,
       footer = NULL,
       size = "s"
@@ -122,7 +148,9 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$help_label_image, {
     showModal(modalDialog(
-      "[TODO] Help with image label upload.",
+      "Select all of the image files at once.",
+      "The file names of these images should match what is given",
+      "in the protoclust object's 'img' character vector.",
       easyClose = TRUE,
       footer = NULL,
       size = "s"
@@ -131,7 +159,8 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$help_init, {
     showModal(modalDialog(
-      "[TODO] Help with initial view.",
+      "By default, the highest 15 nodes in the tree are shown.",
+      "'Dynamic cut' is a data-adaptive algorithm that chooses how much of the tree to show initially.",
       easyClose = TRUE,
       footer = NULL,
       size = "s"
