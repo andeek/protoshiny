@@ -57,7 +57,7 @@ shinyUI(
                                           "Also, choose whether to automate initial view of tree.",
                                           br(),
                                           tags$b("Step 3:"),
-                                          "Click on the 'Visualization' tab."),
+                                          "Click on the 'Visualization' tab. Click on prototypes to expand the subtrees they represent."),
                                         wellPanel(
                                           selectizeInput("upload", 
                                                          HTML("Data source", as.character(actionLink("help_source", icon("info-circle")))), 

@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
     if(input$upload) {
       return(list(helpText("Use the",
                            a("protoclust", href = "https://github.com/jacobbien/protoclust"),
-                           "app to create a protoclust object and save it to a .Rdata file."), 
+                           "R package to create a protoclust object and save it to a .Rdata file."), 
                fileInput('dataset', 
                          'Choose .Rdata file with protoclust object',
                          accept="application/x-RData")))
