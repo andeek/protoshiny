@@ -215,11 +215,18 @@ shinyServer(function(input, output, session) {
   
   ## make path reactive so that it can reset with the new data
   path <- reactiveVal(NULL)
+  reset_path <- reactiveVal(NULL)
   
   ## keep track of selected tab
   tab <- reactiveVal(NULL)
   observeEvent(input$tabs, {
     tab(input$tabs)
+  })
+  
+  # keep track of path for reset when tabs change
+  observeEvent(input$tabs, {
+    pa <- path()
+    if(input$tabs == "Visualization") reset_path(pa)
   })
   
   ## update path if dynamic treecut is used
@@ -378,6 +385,7 @@ shinyServer(function(input, output, session) {
   ## reset button
   observeEvent(input$reset, {
     path("reset the image")
-    path(NULL)
+    pa <- reset_path()
+    path(pa)
   })
 })
