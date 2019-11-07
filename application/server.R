@@ -216,6 +216,12 @@ shinyServer(function(input, output, session) {
   ## make path reactive so that it can reset with the new data
   path <- reactiveVal(NULL)
   
+  ## keep track of selected tab
+  tab <- reactiveVal(NULL)
+  observeEvent(input$tabs, {
+    tab(input$tabs)
+  })
+  
   ## update path if dynamic treecut is used
   observeEvent({input$init_type; input$min_module_size}, {
     req(input$init_type, input$min_module_size)
@@ -357,17 +363,17 @@ shinyServer(function(input, output, session) {
   
   
   ## search box labels
-  output$select_label <- reactive({ 
+  output$select_label <- reactive({
+    select_tab <- tab()
     dat <- data()
     pa <- path()
     ## reset path when getting new data/labels
     ## path(NULL)
     lab <- labels()
-    res <- lab$paths
-    names(res) <- dat$labels
+    res <- list(paths = lab$paths, tab = select_tab)
+    names(res$paths) <- dat$labels
     res
-  })
-  
+  }) 
   
   ## reset button
   observeEvent(input$reset, {

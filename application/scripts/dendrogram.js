@@ -226,8 +226,6 @@ function wrapper(el, data) {
     nodeUpdate.select("text")
         .style("fill-opacity", 1);
         
-    console.log(node[0].length);
-
     // Transition exiting nodes to the parent's new position.
     var nodeExit = node.exit().transition()
         .duration(duration)

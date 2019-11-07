@@ -24,6 +24,7 @@ selectJS <- function(inputoutputId)
   div(id = inputoutputId, class="select_custom")
 }
 
+
 ###
 ### UI Definition
 ###
@@ -33,8 +34,8 @@ shinyUI(
              tabPanel(title="", icon=icon("home", "fa-2x"),
                       div(style = "position:absolute;right:1em;", 
                           actionLink('reset', 'Reset')),
-                      tabsetPanel(
-                        tabPanel("Data",
+                      tabsetPanel(id = "tabs",
+                        tabPanel("Data", id = "data_tab",
                                  br(), 
                                  column(4, 
                                         wellPanel(
@@ -78,10 +79,10 @@ shinyUI(
                                         uiOutput("table_output")
                                         )
                           ),
-                        tabPanel("Visualization", 
-                                 column(12, withSpinner(dynGraph(inputoutputId = 'd3io'),  type=7), 
-                                                        selectJS(inputoutputId = "select_label"))
-                                 
+                        tabPanel("Visualization", id = "viz_tab",
+                                 column(12, 
+                                        withSpinner(dynGraph(inputoutputId = 'd3io'),  type=7),
+                                        selectJS(inputoutputId = "select_label"))
                         )
                       )
              ),
@@ -94,7 +95,7 @@ shinyUI(
                includeCSS("css/slider.css"),
                includeCSS("css/selectize.bootstrap3.css"),
                includeScript("scripts/dendrogram.js"),
-               includeScript("scripts/select_label.js")
+               includeScript("scripts/select_label.js"),
              ),
              theme = shinytheme("spacelab")
   )

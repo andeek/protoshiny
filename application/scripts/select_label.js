@@ -27,38 +27,43 @@ $.extend(inputBinding, {
 Shiny.inputBindings.register(inputBinding);
 
 function select_wrapper(el, data) {
-  
+  var selected_tab = data.tab;
+
   d3.select(el).select("select").remove();
   d3.select(el).select(".selectize-control").remove();
-  var label_select = d3.select(el)
-    .append("select")
-      .attr("id", "select-label")
-      .attr("class", "label");
-  
-  var first_elm = [['Search for first occurence of label:', []]];
-  
-  var labels = label_select.selectAll("option")
-    .data(first_elm.concat(Object.entries(data)));
     
-  labels.enter().append("option")
-    .attr("value", function(d){ return d[1]; })
-    .text(function(d){ return d[0]; });
+  if(selected_tab == "Visualization") { // only have the search if on the viz tab
+    var label_select = d3.select(el)
+      .append("select")
+        .attr("id", "select-label")
+        .attr("class", "label");
+    
+    var first_elm = [['Search for first occurence of label:', []]];
+    
+    var labels = label_select.selectAll("option")
+      .data(first_elm.concat(Object.entries(data.paths)));
       
-  var $select = $('#select-label').selectize({
-					create: false,
-					sortField: {
-						field: 'text',
-						direction: 'asc'
-					},
-					dropdownParent: 'body',
-					onChange: function(value) {
-               label = value;
-          },
-          allowEmptyOption: true
-				});
+    labels.enter().append("option")
+      .attr("value", function(d){ return d[1]; })
+      .text(function(d){ return d[0]; });
+        
+    var $select = $('#select-label').selectize({
+  					create: false,
+  					sortField: {
+  						field: 'text',
+  						direction: 'asc'
+  					},
+  					dropdownParent: 'body',
+  					onChange: function(value) {
+                 label = value;
+            },
+            allowEmptyOption: true
+  				});
+  	
+  	var selectizeControl = $select[0].selectize;
 	
-	var selectizeControl = $select[0].selectize;
-    
-  $("ul.nav.nav-tabs").append($(el));
+    $("ul.nav.nav-tabs").append($(el));
+  }  
+  
 
 }
