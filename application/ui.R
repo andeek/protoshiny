@@ -95,7 +95,7 @@ shinyUI(
                includeCSS("css/slider.css"),
                includeCSS("css/selectize.bootstrap3.css"),
                includeScript("scripts/dendrogram.js"),
-               includeScript("scripts/select_label.js"),
+               includeScript("scripts/select_label.js")
              ),
              theme = shinytheme("spacelab")
   )

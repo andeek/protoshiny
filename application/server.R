@@ -36,20 +36,20 @@ shinyServer(function(input, output, session) {
     
   })
   
+  object_loaded <- reactiveVal(NULL)
   
   ## dynamic UI
   output$choose_object <- renderUI({
     obj <- objects()
     if (!is.null(obj)) {
-      ii <- as.numeric(which(sapply(obj$env, 
-                                    function(o) class(o)[1] == "protoclust")))
-      if (length(ii) == 0)
+      ii <- as.numeric(which(sapply(obj$env, function(o) class(o)[1] == "protoclust")))
+      if (length(ii) == 0) {
         stop(".Rdata file must have a protoclust object.")
-      #else if (length(ii) == 1) {
+      } else if (length(ii) == 1) {
         # can we skip this control and just set input$object to ii?
-      #}
-      # else if (length(ii) > 1) {
-      else if (length(ii) >= 1) {
+        object_loaded(obj$objects[ii])
+        return()
+      } else {
         tagList(
           helpText("Choose the protoclust object to visualize."),
           verbatimTextOutput("objects"),
@@ -202,8 +202,11 @@ shinyServer(function(input, output, session) {
   })
   data <- reactive({
     obj <- objects()
+    ii <- object_loaded()
     if(!is.null(input$object)) {
       return(obj$env[[input$object]])
+    } else if(!is.null(ii)){
+      return(obj$env[[ii]])
     } else {
       return()
     }
