@@ -63,8 +63,6 @@ shinyUI(
                                                          HTML("Data source", as.character(actionLink("help_source", icon("info-circle")))), 
                                                          choices = list("Preloaded" = FALSE, "Upload user data" = TRUE)),
                                           uiOutput("choose_dataset"),
-                                          #helpText("[TODO] Add help text about object selection."),
-                                          #verbatimTextOutput("objects"),
                                           uiOutput("choose_object")
                                           
                                         )
@@ -74,8 +72,6 @@ shinyUI(
                                           uiOutput("choose_display_options")
                                         )),
                                  column(4,
-                                        # verbatimTextOutput("view_data"),
-                                        helpText("[TODO] Add help text about third column."),
                                         uiOutput("table_output")
                                         )
                           ),

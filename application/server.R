@@ -82,7 +82,7 @@ shinyServer(function(input, output, session) {
       conditionalPanel(
         condition = "input.init_type == 'dynamic'",
         numericInput('min_module_size', 
-                     HTML('Specify minimum module size parameter (minModuleSize)', as.character(actionLink("help_minmodulesize", icon("info-circle")))),
+                     'Specify minimum module size parameter (minModuleSize)',
                      min = 1, 
                      value = 2),
         helpText("minModuleSize parameter controls the number of starting nodes in the dendrogram. See table to the right for suggested value in red.")
@@ -161,15 +161,6 @@ shinyServer(function(input, output, session) {
     showModal(modalDialog(
       "By default, the highest 15 nodes in the tree are shown.",
       "'Dynamic cut' is a data-adaptive algorithm that chooses how much of the tree to show initially.",
-      easyClose = TRUE,
-      footer = NULL,
-      size = "s"
-    ))
-  })
-  
-  observeEvent(input$help_minmodulesize, {
-    showModal(modalDialog(
-      "[TODO] Help with min module size.",
       easyClose = TRUE,
       footer = NULL,
       size = "s"
