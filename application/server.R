@@ -294,30 +294,30 @@ shinyServer(function(input, output, session) {
       num_init <- unlist(lapply(cuts, function(x) length(unique(x))))
       
       # course jumps
-      counter <- 0 # make sure this doesn't go forever
-      while(num_init[2] > 1 & counter < 10) {
+      counter1 <- 0 # make sure this doesn't go forever
+      while(num_init[2] > 1 & counter1 < 10) {
         range[2] <- range[2] + 20
         cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
         num_init[2] <- length(unique(cuts[[2]]))
-        counter <- counter + 1
+        counter1 <- counter1 + 1
       }
       
       # half steps
-      counter <- 0 # make sure this doesn't go forever
-      while(num_init[2] == 1 & counter < 10) {
+      counter2 <- 0 # make sure this doesn't go forever
+      while(num_init[2] == 1 & counter2 < 10 & counter1 > 0) {
         range[2] <- (range[2] - range[1])/2
         cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
         num_init[2] <- length(unique(cuts[[2]]))
-        counter <- counter + 1
+        counter2 <- counter2 + 1
       }
       
       # small jumps
-      counter <- 0 # make sure this doesn't go forever
-      while(num_init[2] > 1 & counter < 10) {
+      counter3 <- 0 # make sure this doesn't go forever
+      while(num_init[2] > 1 & counter3 < 10) {
         range[2] <- range[2] + 2
         cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
         num_init[2] <- length(unique(cuts[[2]]))
-        counter <- counter + 1
+        counter3 <- counter3 + 1
       }
       
       d <- unique(round(seq(from = range[1], to = range[2], length.out = 6)))
@@ -329,7 +329,7 @@ shinyServer(function(input, output, session) {
       res <- data.frame(minModuleSize = d, `number clusters` = c(num_init[1], num_init_inner, num_init[2]) - 1, 
                         `approx nodes` = unlist(lapply(outs, function(x) sum(x < -1)))*2 + unlist(lapply(outs, function(x) sum(x == -1))))
       
-      best_idx <- abs(res[res[, 3] > 0, 3] - 50) == min(abs(res[res[, 3] > 0, 3] - 50))
+      best_idx <- abs(res[, 3] - 50) == min(abs(res[res[, 3] > 0, 3] - 50)) & res[, 3] > 0
       best_val <- res[best_idx, 3]
       other_vals <- setdiff(res[, 3], best_val)
       
