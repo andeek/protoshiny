@@ -204,7 +204,11 @@ shinyServer(function(input, output, session) {
   })
   labels <- reactive({
     dat <- data()
-    return(protoclust::find_elements(dat))
+    if(!is.null(dat)) {
+      return(protoclust::find_elements(dat))
+    } else {
+      return(NULL)
+    }
   })
   
   ## make path reactive so that it can reset with the new data
@@ -231,14 +235,20 @@ shinyServer(function(input, output, session) {
       dat <- data()
       lab <- labels()
       d <- input$min_module_size
-      height <- quantile(dat$height, .1)
       
-      # get dynamic cuts
-      dc <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = d)
-      out <- get_nodes_to_expand_info(dat, dc)
-      
-      # nodes to expand
-      path(lapply(lab$int_paths[out == -1], function(x) paste(x, collapse = ",")))
+      if(!is.null(dat)) {
+        height <- quantile(dat$height, .1)
+        
+        # get dynamic cuts
+        dc <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = d)
+        out <- get_nodes_to_expand_info(dat, dc)
+        
+        # nodes to expand
+        path(lapply(lab$int_paths[out == -1], function(x) paste(x, collapse = ",")))
+      } else {
+        path(NULL)
+      }
+
     } else {
       path(NULL)
     }
@@ -257,7 +267,6 @@ shinyServer(function(input, output, session) {
     obj$objects
   })
   
-  
   ## get img path
   img_path <- reactiveVal(FALSE)
   observeEvent(input$images, {
@@ -275,69 +284,74 @@ shinyServer(function(input, output, session) {
   ## preview number of initial nodes
   output$number_clusters <- DT::renderDT({
     req(input$init_type)
+    null_table <- DT::datatable(data.frame(minModuleSize = NULL, `number clusters` = NULL, `number inner nodes` = NULL),
+                                options = list(dom = 't'),
+                                rownames = FALSE)
     
     if(input$init_type == 'dynamic') {
       dat <- data()
-      height <- quantile(dat$height, .1)
-      range <- c(2, 4)
-      
-      # get dynamic cuts
-      cuts <- lapply(range, function(i) dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i))
-      num_init <- unlist(lapply(cuts, function(x) length(unique(x))))
-      
-      # course jumps
-      counter1 <- 0 # make sure this doesn't go forever
-      while(num_init[2] > 1 & counter1 < 10) {
-        range[2] <- range[2] + 20
-        cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
-        num_init[2] <- length(unique(cuts[[2]]))
-        counter1 <- counter1 + 1
+      if(!is.null(dat)) {
+        height <- quantile(dat$height, .1)
+        range <- c(2, 4)
+        
+        # get dynamic cuts
+        cuts <- lapply(range, function(i) dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i))
+        num_init <- unlist(lapply(cuts, function(x) length(unique(x))))
+        
+        # course jumps
+        counter1 <- 0 # make sure this doesn't go forever
+        while(num_init[2] > 1 & counter1 < 10) {
+          range[2] <- range[2] + 20
+          cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
+          num_init[2] <- length(unique(cuts[[2]]))
+          counter1 <- counter1 + 1
+        }
+        
+        # half steps
+        counter2 <- 0 # make sure this doesn't go forever
+        while(num_init[2] == 1 & counter2 < 10 & counter1 > 0) {
+          range[2] <- (range[2] - range[1])/2
+          cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
+          num_init[2] <- length(unique(cuts[[2]]))
+          counter2 <- counter2 + 1
+        }
+        
+        # small jumps
+        counter3 <- 0 # make sure this doesn't go forever
+        while(num_init[2] > 1 & counter3 < 10) {
+          range[2] <- range[2] + 2
+          cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
+          num_init[2] <- length(unique(cuts[[2]]))
+          counter3 <- counter3 + 1
+        }
+        
+        d <- unique(round(seq(from = range[1], to = range[2], length.out = 6)))
+        cuts_inner <- lapply(d[-c(1, length(d))], function(i) dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i))
+        num_init_inner <- unlist(lapply(cuts_inner, function(x) length(unique(x))))
+        
+        outs <- lapply(c(list(cuts[[1]]), cuts_inner, list(cuts[[2]])), function(cuts) get_nodes_to_expand_info(dat, cuts))
+        
+        res <- data.frame(minModuleSize = d, `number clusters` = c(num_init[1], num_init_inner, num_init[2]) - 1, 
+                          `approx nodes` = unlist(lapply(outs, function(x) sum(x < -1)))*2 + unlist(lapply(outs, function(x) sum(x == -1))))
+        
+        best_idx <- abs(res[, 3] - 50) == min(abs(res[res[, 3] > 0, 3] - 50)) & res[, 3] > 0
+        best_val <- res[best_idx, 3]
+        other_vals <- setdiff(res[, 3], best_val)
+        
+        updateNumericInput(session, "min_module_size", value = min(d[best_idx]))
+        
+        res_table <- DT::datatable(res, options = list(dom = 't'), rownames = FALSE)
+        
+        DT::formatStyle(res_table,
+                        3, target = 'row',
+                        fontWeight = DT::styleEqual(c(other_vals, best_val), c(rep("normal", length(other_vals)), rep("bold", length(best_val)))),
+                        color = DT::styleEqual(c(other_vals, best_val), c(rep("#666666", length(other_vals)), rep("red", length(best_val)))))
+        
+      } else {
+        null_table
       }
-      
-      # half steps
-      counter2 <- 0 # make sure this doesn't go forever
-      while(num_init[2] == 1 & counter2 < 10 & counter1 > 0) {
-        range[2] <- (range[2] - range[1])/2
-        cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
-        num_init[2] <- length(unique(cuts[[2]]))
-        counter2 <- counter2 + 1
-      }
-      
-      # small jumps
-      counter3 <- 0 # make sure this doesn't go forever
-      while(num_init[2] > 1 & counter3 < 10) {
-        range[2] <- range[2] + 2
-        cuts[[2]] <- dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = range[2])
-        num_init[2] <- length(unique(cuts[[2]]))
-        counter3 <- counter3 + 1
-      }
-      
-      d <- unique(round(seq(from = range[1], to = range[2], length.out = 6)))
-      cuts_inner <- lapply(d[-c(1, length(d))], function(i) dynamicTreeCut::cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = i))
-      num_init_inner <- unlist(lapply(cuts_inner, function(x) length(unique(x))))
-      
-      outs <- lapply(c(list(cuts[[1]]), cuts_inner, list(cuts[[2]])), function(cuts) get_nodes_to_expand_info(dat, cuts))
-      
-      res <- data.frame(minModuleSize = d, `number clusters` = c(num_init[1], num_init_inner, num_init[2]) - 1, 
-                        `approx nodes` = unlist(lapply(outs, function(x) sum(x < -1)))*2 + unlist(lapply(outs, function(x) sum(x == -1))))
-      
-      best_idx <- abs(res[, 3] - 50) == min(abs(res[res[, 3] > 0, 3] - 50)) & res[, 3] > 0
-      best_val <- res[best_idx, 3]
-      other_vals <- setdiff(res[, 3], best_val)
-      
-      updateNumericInput(session, "min_module_size", value = min(d[best_idx]))
-      
-      res_table <- DT::datatable(res, options = list(dom = 't'), rownames = FALSE)
-      
-      DT::formatStyle(res_table,
-                      3, target = 'row',
-                      fontWeight = DT::styleEqual(c(other_vals, best_val), c(rep("normal", length(other_vals)), rep("bold", length(best_val)))),
-                      color = DT::styleEqual(c(other_vals, best_val), c(rep("#666666", length(other_vals)), rep("red", length(best_val)))))
-      
     } else {
-      DT::datatable(data.frame(minModuleSize = NULL, `number clusters` = NULL, `number inner nodes` = NULL),
-                    options = list(dom = 't'),
-                    rownames = FALSE)
+      null_table
     }
   })
   
@@ -345,10 +359,15 @@ shinyServer(function(input, output, session) {
   observe({
     output$d3io <- reactive({
       dat <- data()
-      json <- protoclust_to_json(dat)
-      pa <- path()
-      img_pa <- img_path()
-      list(data = json, path = pa, img_path = img_pa)
+      if(!is.null(dat)) {
+        json <- protoclust_to_json(dat)
+        pa <- path()
+        img_pa <- img_path()
+        list(data = json, path = pa, img_path = img_pa)
+      } else {
+        list(data = NULL, path = NULL, img_path = NULL)
+      }
+      
     })
   })
   
