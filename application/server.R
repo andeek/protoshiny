@@ -272,14 +272,6 @@ shinyServer(function(input, output, session) {
     if(input$label_type == "text") img_path(FALSE)
   })
   
-  
-  ## preview loaded objects
-  # output$view_data <- renderPrint({
-  #   dat <- data()
-  #   str(dat[-length(dat)])
-  # })
-  
-  
   ## preview number of initial nodes
   output$number_clusters <- DT::renderDT({
     req(input$init_type)
@@ -349,8 +341,6 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  
-  
   ##send data to client side handler
   observe({
     output$d3io <- reactive({
@@ -361,7 +351,6 @@ shinyServer(function(input, output, session) {
       list(data = json, path = pa, img_path = img_pa)
     })
   })
-  
   
   ## search box labels
   output$select_label <- reactive({

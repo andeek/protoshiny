@@ -165,14 +165,21 @@ function wrapper(el, data) {
         .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
     if(data.img_path) {
-      nodeEnter.append("image")
+      var imageEnter = nodeEnter.append("image")
         .attr("xlink:href", function(d) { return  "image_labels/" + d.img; })
         .attr("x", "-25px")
         .attr("y", "-25px")
         .attr("width", "50px")
         .attr("height", "50px")
         .attr("class", function(d) {return d._children ? "label-child" : "label-nochild";})
-        .on("mouseover", function(selected){
+        
+        nodeEnter.append("text")
+          .attr("x", "30px")
+          .attr("y", "0px")
+          .attr("class", "label-image-text")
+          .text(function(d) {return(d.name);});
+          
+        imageEnter.on("mouseover", function(selected){
           svg.selectAll("g.node").sort(function(a, b) {
             if (a.id === selected.id) {
               return 1;
@@ -184,8 +191,20 @@ function wrapper(el, data) {
               }
             }
           });
+          
+          svg.selectAll("g.node")
+            .filter(function(a) {
+              return(a.id == selected.id);
+            })
+            .selectAll("text.label-image-text")
+            .style("display", "block");
+          
         });
-      
+        
+        imageEnter.on("mouseout", function(){
+          svg.selectAll("text.label-image-text")
+            .style("display", "none");
+        });
     } else {
       nodeEnter.append("text")
         .attr("x", function(d) { return d.children || d._children ? -8 : 8; })

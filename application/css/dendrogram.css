@@ -39,4 +39,8 @@
   max-width: 300px;
 }
 
+svg g text.label-image-text {
+  display: none;
+  font: 10px sans-serif;
+}
 
