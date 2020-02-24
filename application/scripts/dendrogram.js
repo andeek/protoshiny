@@ -10,17 +10,21 @@ Shiny.outputBindings.register(outputBinding);
 
 function wrapper(el, data) {
   var margin = {top: 10, bottom: 5, left: 5, right: 5},
-      height = $(window).height() - $('.span12').height() - $('.nav-tabs').height() - $('.navbar').height() - margin.bottom - margin.top;
+      height = window.innerHeight - $('.nav-tabs').height() - $('.navbar').height() - margin.bottom - margin.top;
+      
+      console.log(height);
     
   var i = 0,
     duration = 750,
     root;
   
   if(data) { // wait for data to load
-      
       root = JSON.parse(data.data);
+      
       root.x0 = height / 2;
       root.y0 = root.height;
+      
+      console.log(root);
       
       var maxLabelLength = 0;
       var leaves = [];
@@ -32,6 +36,8 @@ function wrapper(el, data) {
 		    else if (d._children) {return d._children;}
 		    else {return null;}
       });
+      
+      console.log(leaves);
       
       var right_label_pad = 100,
           left_label_pad = root.name.length*5 + 10,
@@ -143,6 +149,7 @@ function wrapper(el, data) {
   }
 
   function update(source) {
+    console.log(source);
     // Compute the new cluster layout.
     var nodes = cluster.nodes(root).reverse(),
         links = cluster.links(nodes);
