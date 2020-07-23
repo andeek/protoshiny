@@ -166,16 +166,59 @@ function wrapper(el, data) {
 
     if(data.img_path) {
       var imageEnter = nodeEnter.append("image")
-        .attr("xlink:href", function(d) { return  "image_labels/" + d.img; })
+        .attr("xlink:href", function(d) { 
+          if(d.parent) {
+            // not the root
+            if(d.children || d._children) {
+              // not the leaves
+              return d.parent.name != d.name ? "image_labels/" + d.img : "";
+            } else {
+              //leaves
+              return "image_labels/" + d.img;
+            }
+          } else {
+            // root
+            return "image_labels/" + d.img;
+          }
+        })
         .attr("x", "-25px")
         .attr("y", "-25px")
         .attr("width", "50px")
         .attr("height", "50px")
-        .attr("class", function(d) {return d._children ? "label-child" : "label-nochild";})
+        .attr("class", function(d) {return d._children ? "label-child" : "label-nochild";});
         
         nodeEnter.append("text")
-          .attr("x", "30px")
-          .attr("y", "0px")
+          .attr("x", function(d) {
+            if(d.parent) {
+              // not the root
+              if(d.children || d._children) {
+                // not the leaves
+                return d.parent.name != d.name ? "-30px" : -8;
+              } else {
+                //leaves
+                return "30px";
+              }
+            } else {
+              // root
+              return "-30px";  
+            }
+          })
+          .attr("y", function(d) {
+            if(d.parent) {
+              // not the root
+              if(d.children || d._children) {
+                // not the leaves
+                return d.parent.name != d.name ? "0px" : ".35em";
+              } else {
+                //leaves
+                return "0px";
+              }
+            } else {
+              // root
+              return "0px";  
+            }
+          })
+          .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
           .attr("class", "label-image-text")
           .text(function(d) {return(d.name);});
           
