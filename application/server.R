@@ -279,6 +279,7 @@ shinyServer(function(input, output, session) {
   })
   observeEvent(input$label_type, {
     if(input$label_type == "text") img_path(FALSE)
+    else if(input$label_type == "image") img_path(TRUE)
   })
   
   ## preview number of initial nodes
