@@ -48,6 +48,10 @@ function wrapper(el, data) {
       var svg = d3.select(el).append("svg")
           .attr("width", width)
           .attr("height", height)
+          .call(d3.behavior.zoom().on("zoom", function () {
+            svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
+            update();
+          }))
         .append("g")
           .attr("transform", "translate(" + left_label_pad + "," + margin.top + ")");
           
