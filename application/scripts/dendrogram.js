@@ -10,7 +10,8 @@ Shiny.outputBindings.register(outputBinding);
 
 function wrapper(el, data) {
   var margin = {top: 10, bottom: 5, left: 5, right: 5},
-      height = window.innerHeight - $('.nav-tabs').height() - $('.navbar').height() - margin.bottom - margin.top;
+      height = window.innerHeight - $('.nav-tabs').height() - $('.navbar').height() - margin.bottom - margin.top,
+      zoom_scale = 1;
 
   var i = 0,
     duration = 750,
@@ -48,18 +49,11 @@ function wrapper(el, data) {
       var svg = d3.select(el).append("svg")
           .attr("width", width)
           .attr("height", height)
-          .call(d3.behavior.zoom().on("zoom", function () {
-            svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
-            update();
-          }))
+          .call(d3.behavior.zoom().on("zoom", zoom))
         .append("g")
           .attr("transform", "translate(" + left_label_pad + "," + margin.top + ")");
-          
-      //slider stuff
-      var slider = svg.append("g")
-        .attr("class", "slider")
-        .attr("transform", "translate(0, " + (height - slider_pad - margin.bottom) + ")");
-        
+      
+      
       var max_height = 0;
 
       // rescale heights
@@ -67,6 +61,12 @@ function wrapper(el, data) {
       var x_map = d3.scale.linear()
         .domain([0, max_height])
         .range([width - right_label_pad - left_label_pad, 0]);
+        
+      
+      //slider stuff
+      var slider = svg.append("g")
+        .attr("class", "slider")
+        .attr("transform", "translate(0, " + (height - slider_pad - margin.bottom) + ")");
       
       // slider scale
       var slide_x = d3.scale.linear()
@@ -74,7 +74,7 @@ function wrapper(el, data) {
         .range([0, width - right_label_pad - left_label_pad])
         .clamp(true);
         
-      var drag = d3.behavior.drag();
+      //var drag = d3.behavior.drag();
       
       // slider axis  
       slider.append("line")
@@ -92,7 +92,8 @@ function wrapper(el, data) {
           .attr("class", "track-middle")
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
           .attr("class", "track-overlay");
-        
+      
+      
       slider.insert("g", ".track-overlay")
           .attr("class", "ticks")
           .attr("transform", "translate(0," + 18 + ")")
@@ -103,6 +104,7 @@ function wrapper(el, data) {
           .attr("text-anchor", "middle")
           .text(function(d) { return d; });
       
+      /*
       // slider handles
       var handle_max = slider.append("circle", ".track-overlay")
           .attr("class", "handle max")
@@ -115,6 +117,7 @@ function wrapper(el, data) {
           .attr("r", 9)
           .attr("cx", slide_x.range()[0])
           .call(drag.on("drag", zoomed));
+      */
       
       // collapse children and draw tree
       if(data.path) {
@@ -166,7 +169,8 @@ function wrapper(el, data) {
 
     nodeEnter.append("circle")
         .attr("r", 1e-6)
-        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
+        .attr("transform", "scale(" + 1/zoom_scale + ")");
 
     if(data.img_path) {
       var imageEnter = nodeEnter.append("image")
@@ -189,7 +193,8 @@ function wrapper(el, data) {
         .attr("y", "-25px")
         .attr("width", "50px")
         .attr("height", "50px")
-        .attr("class", function(d) {return d._children ? "label-child" : "label-nochild";});
+        .attr("class", function(d) {return d._children ? "label-child" : "label-nochild";})
+        .attr("transform", "scale(" + 1/zoom_scale + ")");
         
         nodeEnter.append("text")
           .attr("x", function(d) {
@@ -224,7 +229,8 @@ function wrapper(el, data) {
           })
           .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
           .attr("class", "label-image-text")
-          .text(function(d) {return(d.name);});
+          .text(function(d) {return(d.name);})
+          .attr("transform", "scale(" + 1/zoom_scale + ")");
           
         imageEnter.on("mouseover", function(selected){
           svg.selectAll("g.node").sort(function(a, b) {
@@ -275,14 +281,16 @@ function wrapper(el, data) {
         
            //return d.name;
         })
-        .style("fill-opacity", 1e-6);
+        .attr("class", "label-text")
+        .style("fill-opacity", 1e-6)
+        .attr("transform", "scale(" + 1/zoom_scale + ")");
     }
 
 
     // Transition nodes to their new position.
     var nodeUpdate = node.transition()
         .duration(duration)
-        .attr("transform", function(d) { return "translate(" + x_map(d.height) + "," + d.x + ")"; });
+        .attr("transform", function(d) { return "translate(" + x_map(d.height) + "," + d.x + ")"});
     
     nodeUpdate.select("circle")
         .attr("r", 4.5)
@@ -371,6 +379,7 @@ function wrapper(el, data) {
     }
   }
   
+  /*
   function zoomed(d) {
     var x_val = slide_x.invert(d3.event.x);
     var right, left;
@@ -408,6 +417,7 @@ function wrapper(el, data) {
     }
     update(root);
   }
+  */
   
   function visit(parent, visitFn, childrenFn) {
       if (!parent) return;
@@ -445,6 +455,18 @@ function wrapper(el, data) {
       inner_nav(path.slice(1), data.children[+path[0]]);
     }
   }
+  
+  // zoom function
+  function zoom() {
+    zoom_scale = d3.event.scale;
+    
+    svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + zoom_scale + ")");
+    
+    // zoom the labels
+    svg.selectAll("g.node>text,.node>circle,.node>image")
+        .attr("transform", "scale(" + 1/zoom_scale + ")");
+  }
+  
 }
 
 // bring to front on hover
