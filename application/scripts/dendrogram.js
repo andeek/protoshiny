@@ -100,6 +100,7 @@ function wrapper(el, data) {
         .selectAll("text")
         .data(slide_x.ticks(10))
         .enter().append("text")
+          .attr("class", "slider-label")
           .attr("x", slide_x)
           .attr("text-anchor", "middle")
           .text(function(d) { return d; });
@@ -465,6 +466,7 @@ function wrapper(el, data) {
     // zoom the labels
     svg.selectAll("g.node>text,.node>circle,.node>image")
         .attr("transform", "scale(" + 1/zoom_scale + ")");
+        
   }
   
 }

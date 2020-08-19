@@ -1,11 +1,12 @@
 ###
 ### Helper functions
 ###
-source("r/helpers.R")
-source("r/label_subtrees.R")
+### these load automatically now in shiny
+# source("r/helpers.R")
+# source("r/label_subtrees.R")
 
 ##list of default data files
-data_sets <- list.files("data/", pattern="*.RData|*.Rdata")
+data_sets <- list.files("./data/", pattern="*.RData|*.Rdata")
 
 ##function for loading an object into a new environment
 load_obj <- function(file) {
@@ -173,7 +174,7 @@ shinyServer(function(input, output, session) {
     
     if(!is.null(input$dataset)) {
       if(class(input$dataset) == "character") {
-        name <- file <- paste0("data/", input$dataset)
+        name <- file <- paste0("./data/", input$dataset)
       } else {
         file <- input$dataset$datapath ##uploaded data
         name <- input$dataset$name
