@@ -1,0 +1,6 @@
+The protoshiny package as a whole is distributed under GPL-3. The protoshiny package includes other open source software components. The following is a list of these components:
+
+* d3: BSD 3-Clause "New" or "Revised" License
+* selectize: Apache License 2.0
+
+Full copies of the license agreements used by these components are included in `inst/dendrogram/lib`.
