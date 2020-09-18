@@ -31,6 +31,7 @@
 #' @importFrom stats quantile
 #' @importFrom DT DTOutput
 #' @importFrom tools file_ext
+#' @importFrom protoclust find_elements
 get_server <- function() {
   ##list of default data files
   data_sets <- list.files(system.file("ext_data", package = "protoshiny", mustWork = TRUE), pattern="*.RData|*.Rdata")
@@ -226,7 +227,7 @@ get_server <- function() {
     labels <- reactive({
       dat <- data()
       if(!is.null(dat)) {
-        return(protoclust::find_elements(dat))
+        return(find_elements(dat))
       } else {
         return(NULL)
       }
