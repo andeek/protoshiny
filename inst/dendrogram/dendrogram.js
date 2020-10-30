@@ -53,7 +53,6 @@ function wrapper(el, data) {
         .append("g")
           .attr("transform", "translate(" + left_label_pad + "," + margin.top + ")");
       
-      
       var max_height = 0;
 
       // rescale heights
@@ -62,7 +61,6 @@ function wrapper(el, data) {
         .domain([0, max_height])
         .range([width - right_label_pad - left_label_pad, 0]);
         
-      
       //slider stuff
       var slider = svg.append("g")
         .attr("class", "slider")
@@ -74,8 +72,6 @@ function wrapper(el, data) {
         .range([0, width - right_label_pad - left_label_pad])
         .clamp(true);
         
-      //var drag = d3.behavior.drag();
-      
       // slider axis  
       slider.append("line")
           .attr("class", "track")
@@ -92,8 +88,7 @@ function wrapper(el, data) {
           .attr("class", "track-middle")
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
           .attr("class", "track-overlay");
-      
-      
+
       slider.insert("g", ".track-overlay")
           .attr("class", "ticks")
           .attr("transform", "translate(0," + 18 + ")")
@@ -104,21 +99,6 @@ function wrapper(el, data) {
           .attr("x", slide_x)
           .attr("text-anchor", "middle")
           .text(function(d) { return d; });
-      
-      /*
-      // slider handles
-      var handle_max = slider.append("circle", ".track-overlay")
-          .attr("class", "handle max")
-          .attr("r", 9)
-          .attr("cx", slide_x(0))
-          .call(drag.on("drag", zoomed));
-          
-      var handle_min = slider.append("circle", ".track-overlay")
-          .attr("class", "handle min")
-          .attr("r", 9)
-          .attr("cx", slide_x.range()[0])
-          .call(drag.on("drag", zoomed));
-      */
       
       // collapse children and draw tree
       if(data.path) {
@@ -180,14 +160,14 @@ function wrapper(el, data) {
             // not the root
             if(d.children || d._children) {
               // not the leaves
-              return d.parent.name != d.name ? "image_labels/" + d.img : "";
+              return d.parent.name != d.name ? data.img_path_loc + "/" + d.img : "";
             } else {
               //leaves
-              return "image_labels/" + d.img;
+              return data.img_path_loc + "/" + d.img;
             }
           } else {
             // root
-            return "image_labels/" + d.img;
+            return data.img_path_loc + "/" + d.img;
           }
         })
         .attr("x", "-25px")

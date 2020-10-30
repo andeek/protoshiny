@@ -21,6 +21,7 @@
 #' @importFrom shiny req
 #' @importFrom dynamicTreeCut cutreeDynamicTree
 #' @importFrom shiny addResourcePath
+#' @importFrom shiny removeResourcePath
 #' @importFrom DT renderDT
 #' @importFrom DT datatable
 #' @importFrom shiny updateNumericInput
@@ -289,11 +290,15 @@ get_server <- function() {
 
     ## get img path ----
     img_path <- reactiveVal(FALSE)
+    img_path_loc <- reactiveVal(FALSE)
     observeEvent(input$images, {
+      pa <- img_path_loc()
       if(input$label_type == "image") {
         fixed_images <- fixUploadedFilesNames(input$images)
-        pa <- dirname(fixed_images$datapath)[1]
-        addResourcePath('image_labels', pa)
+        datapa <- dirname(fixed_images$datapath)[1]
+        img_path_loc(datapa)
+        
+        addResourcePath(gsub("/", "", datapa), datapa)
         img_path(TRUE)
       }
     })
@@ -386,9 +391,10 @@ get_server <- function() {
           json <- protoclust_to_json(dat)
           pa <- path()
           img_pa <- img_path()
-          list(data = json, path = pa, img_path = img_pa)
+          img_pa_loc <- img_path_loc()
+          list(data = json, path = pa, img_path = img_pa, img_path_loc = gsub("/", "", img_pa_loc))
         } else {
-          list(data = NULL, path = NULL, img_path = NULL)
+          list(data = NULL, path = NULL, img_path = NULL, img_path_loc = NULL)
         }
 
       })
