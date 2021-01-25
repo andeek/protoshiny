@@ -68,7 +68,8 @@ function wrapper(el, data) {
       
       // slider scale
       var slide_x = d3.scale.linear()
-        .domain([root.height, d3.format(".1n")(-d3.max([maxLabelLength - 100, 0])/100) - 0.1])
+        // .domain([root.height, d3.format(".1n")(-d3.max([maxLabelLength - 100, 0])/100) - 0.1])
+        .domain([root.height, d3.format(".1n")(-d3.max([maxLabelLength - 100, 0])/100)])
         .range([0, width - right_label_pad - left_label_pad])
         .clamp(true);
         
