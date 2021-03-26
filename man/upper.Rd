@@ -30,3 +30,4 @@ different indexing from the original tree.  i.original can be used to recover
 the old indexing and merge.id indicates for each leaf of new tree that had
 been an interior node, the merge.id of it.
 }
+\keyword{internal}

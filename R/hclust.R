@@ -19,6 +19,7 @@
 #'   \item{h}{cut height}
 #'   \item{n.original}{number of objects in original tree}
 #' }
+#' @keywords internal
 upper <- function(hc, h = NULL, k = NULL) {
   n = length(hc$order)
   if (is.null(h)) {
@@ -88,6 +89,7 @@ upper <- function(hc, h = NULL, k = NULL) {
 #' @param hc protoclust object
 #' @param merge.id a particular interior node
 #' @return an hclust object consisting of the branch with root given by merge.id.
+#' @keywords internal
 branch <- function(hc, merge.id) {
   n = length(hc$order)
   ii = seq(merge.id)

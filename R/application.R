@@ -58,7 +58,6 @@ get_server <- function() {
       }
 
     })
-
     object_loaded <- reactiveVal(NULL)
 
     ## dynamic UI ----
@@ -83,7 +82,6 @@ get_server <- function() {
         }
       }
     })
-
     output$choose_display_options <- renderUI({
       #obj <- objects()
       tagList(
@@ -112,7 +110,6 @@ get_server <- function() {
         )
       )
     })
-
     output$table_output <- renderUI({
       conditionalPanel(
         condition = "input.init_type == 'dynamic'",
@@ -130,7 +127,6 @@ get_server <- function() {
         size = "s"
       ))
     })
-
     observeEvent(input$help_dataset_preload, {
       showModal(modalDialog(
         "Choose one of the example data sets.",
@@ -139,7 +135,6 @@ get_server <- function() {
         size = "s"
       ))
     })
-
     observeEvent(input$help_object, {
       showModal(modalDialog(
         "Choose which protoclust object to visualize.",
@@ -148,7 +143,6 @@ get_server <- function() {
         size = "s"
       ))
     })
-
     observeEvent(input$help_label, {
       showModal(modalDialog(
         "Labels appear at each node of the tree.",
@@ -168,7 +162,6 @@ get_server <- function() {
         size = "s"
       ))
     })
-
     observeEvent(input$help_label_image, {
       showModal(modalDialog(
         "Select all of the image files at once.",
@@ -179,7 +172,6 @@ get_server <- function() {
         size = "s"
       ))
     })
-
     observeEvent(input$help_init, {
       showModal(modalDialog(
         "By default, the highest 15 nodes in the tree are shown.",
@@ -238,19 +230,19 @@ get_server <- function() {
     path <- reactiveVal(NULL)
     reset_path <- reactiveVal(NULL)
 
-    ## keep track of selected tab
+    ## keep track of selected tab ----
     tab <- reactiveVal(NULL)
     observeEvent(input$tabs, {
       tab(input$tabs)
     })
 
-    # keep track of path for reset when tabs change
+    # keep track of path for reset when tabs change ----
     observeEvent(input$tabs, {
       pa <- path()
       if(input$tabs == "Visualization") reset_path(pa)
     })
 
-    ## update path if dynamic treecut is used
+    ## update path if dynamic treecut is used ----
     observeEvent({input$init_type; input$min_module_size}, {
       req(input$init_type, input$min_module_size)
 
@@ -282,7 +274,7 @@ get_server <- function() {
       path(input$select_label)
     })
 
-    ## allow user to choose and view loaded object
+    ## allow user to choose and view loaded object ----
     output$objects <- reactive({
       obj <- objects()
       obj$objects
@@ -503,6 +495,7 @@ get_ui <- function() {
                  includeScript(system.file("dendrogram/lib/d3", "d3.v3.min.js", package = "protoshiny"), charset="utf-8"),
                  includeScript(system.file("dendrogram", "top-nav-links.js", package = "protoshiny")),
                  includeScript(system.file("dendrogram/lib/selectize", "selectize.js", package = "protoshiny")),
+                 includeScript(system.file("dendrogram/lib/selectize", "selectize-plugin-a11y.js", package = "protoshiny")),
                  includeCSS(system.file("dendrogram", "dendrogram.css", package = "protoshiny")),
                  includeCSS(system.file("dendrogram/lib/selectize", "selectize.bootstrap3.css", package = "protoshiny")),
                  includeScript(system.file("dendrogram", "dendrogram.js", package = "protoshiny")),

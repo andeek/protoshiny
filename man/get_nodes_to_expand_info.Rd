@@ -21,3 +21,4 @@ Returns an n-vector giving the labels of each interior node. A positive value
 \description{
 Get the labels of each interior node
 }
+\keyword{internal}

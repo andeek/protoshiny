@@ -4,6 +4,7 @@
 
 #' Load an object into a new environment
 #' @param file object to load into the new environment
+#' @keywords internal
 load_obj <- function(file) {
   env <- new.env()
   nm <- load(file, env)
@@ -12,6 +13,7 @@ load_obj <- function(file) {
 
 #' Convert a protoclust object to a JSON tree
 #' @param proto_object protoclust object including merge, labels, and height
+#' @keywords internal
 protoclust_to_json <- function(proto_object) {
   ##must be a protoclust object
   stopifnot("protoclust" %in% class(proto_object))
@@ -63,6 +65,7 @@ protoclust_to_json <- function(proto_object) {
 
 #' Fix uploaded files are getting renamed
 #' @param x uploaded object
+#' @keywords internal
 fixUploadedFilesNames <- function(x) {
   if (is.null(x)) {
     return()
@@ -97,6 +100,7 @@ fixUploadedFilesNames <- function(x) {
 #'     means that all nodes in that node's subtree have that label.  A value of -1 means
 #'     that this node's children have different labels.  A value of -2 means that at least
 #'     one child has a value of -1.  And so forth.
+#' @keywords internal
 get_nodes_to_expand_info <- function(hc, dc) {
   n <- length(dc)
   stopifnot(length(hc$height) == n - 1)
@@ -125,13 +129,15 @@ get_nodes_to_expand_info <- function(hc, dc) {
 
 #' Dynamic element of class "d3graph"
 #' @param inputoutputId ID of the input/output element
+#' @keywords internal
 dynGraph <- function(inputoutputId)
 {
   div(id = inputoutputId, class="d3graph")
 }
 
-#' Dynamic element of class "select_custon"
+#' Dynamic element of class "select_custom"
 #' @param inputoutputId ID of the input/output element
+#' @keywords internal
 selectJS <- function(inputoutputId)
 {
   div(id = inputoutputId, class="select_custom")

@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{selectJS}
 \alias{selectJS}
-\title{Dynamic element of class "select_custon"}
+\title{Dynamic element of class "select_custom"}
 \usage{
 selectJS(inputoutputId)
 }
@@ -10,5 +10,6 @@ selectJS(inputoutputId)
 \item{inputoutputId}{ID of the input/output element}
 }
 \description{
-Dynamic element of class "select_custon"
+Dynamic element of class "select_custom"
 }
+\keyword{internal}

@@ -12,3 +12,4 @@ dynGraph(inputoutputId)
 \description{
 Dynamic element of class "d3graph"
 }
+\keyword{internal}

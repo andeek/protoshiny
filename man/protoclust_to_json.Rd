@@ -12,3 +12,4 @@ protoclust_to_json(proto_object)
 \description{
 Convert a protoclust object to a JSON tree
 }
+\keyword{internal}

@@ -17,3 +17,4 @@ an hclust object consisting of the branch with root given by merge.id.
 \description{
 Get an hclust object consisting of the branch with root given by a particular interior node
 }
+\keyword{internal}

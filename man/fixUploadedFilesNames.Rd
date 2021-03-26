@@ -12,3 +12,4 @@ fixUploadedFilesNames(x)
 \description{
 Fix uploaded files are getting renamed
 }
+\keyword{internal}

@@ -12,3 +12,4 @@ load_obj(file)
 \description{
 Load an object into a new environment
 }
+\keyword{internal}
