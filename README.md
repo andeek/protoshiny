@@ -35,11 +35,16 @@ visualize_hc()
 
 ## Using the app
 
+<!-- ffmpeg -i default_data.mov -s 800x400 -pix_fmt rgb24 -r 10 -f gif - | gifsicle --optimize=3 --delay=3 > ~/Documents/research/data_viz/protoshiny/man/figures/README-default_data.gif -->
+
 After launching the application, either upload your own cluster object
 or use the provided demo data sets. To use the provided demo data sets,
-simply select one from the dropdown.
+simply select one from the dropdown. To quickly get to interacting with
+the dendrogram, you can leave all other options as the default and click
+the “Visualization” tab.
 
 ![](man/figures/README-default_data.gif)
+<!-- TODO: remake to choose movies and click visualization tab. -->
 
 If you would like to upload your own data set hierarchical clustering
 object, select its location on your computer.
@@ -53,9 +58,9 @@ computer.
 
 ![](man/figures/README-image_labels.gif)
 
-If you would lie your initial view of the dendrogram to be a dynamic cut
-(provided by the `dynamicTreeCut` package), you can choose the minimum
-size of the final clusters resulting from the cut.
+If you would like your initial view of the dendrogram to be a dynamic
+cut (provided by the `dynamicTreeCut` package), you can choose the
+minimum size of the final clusters resulting from the cut.
 
 ![](man/figures/README-dynamic_cut.gif)
 
