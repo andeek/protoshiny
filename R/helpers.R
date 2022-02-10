@@ -32,11 +32,11 @@ protoclust_to_json <- function(proto_object) {
 
   if(image_labels){
     leaves <- vapply(1:n,
-                     FUN = function(i) return(paste0('{ "name" : "', labels[i], '", "img" : "', images[i], '", "proto" : ', i, ',  "height" : 0 }')),
+                     FUN = function(i) return(paste0('{ "merge_id" : "', -i, '", "name" : "', labels[i], '", "img" : "', images[i], '", "proto" : ', i, ',  "height" : 0 }')),
                      FUN.VALUE = "character()")
   } else {
     leaves <- vapply(1:n,
-                     FUN = function(i) return(paste0('{ "name" : "', labels[i], '", "proto" : ', i, ',  "height" : 0 }')),
+                     FUN = function(i) return(paste0('{ "merge_id" : "', -i, '", "name" : "', labels[i], '", "proto" : ', i, ',  "height" : 0 }')),
                      FUN.VALUE = "character()")
   }
 
@@ -55,9 +55,9 @@ protoclust_to_json <- function(proto_object) {
       clusters[merge[i,2]] <- NA
     }
     if(image_labels){
-      clusters[i] <- paste0('{ "name" : "', labels[protos[i]], '", "img" : "', images[protos[i]], '", "proto" : ', protos[i], ',  "height" : ', height[i], ', "children" : [' , paste(a, b, sep = ", "), ']}')
+      clusters[i] <- paste0('{ "merge_id" : "', i, '", "name" : "', labels[protos[i]], '", "img" : "', images[protos[i]], '", "proto" : ', protos[i], ',  "height" : ', height[i], ', "children" : [' , paste(a, b, sep = ", "), ']}')
     } else {
-      clusters[i] <- paste0('{ "name" : "', labels[protos[i]], '", "proto" : ', protos[i], ',  "height" : ', height[i], ', "children" : [' , paste(a, b, sep = ", "), ']}')
+      clusters[i] <- paste0('{ "merge_id" : "', i, '", "name" : "', labels[protos[i]], '", "proto" : ', protos[i], ',  "height" : ', height[i], ', "children" : [' , paste(a, b, sep = ", "), ']}')
     }
   }
   return(clusters[n-1])

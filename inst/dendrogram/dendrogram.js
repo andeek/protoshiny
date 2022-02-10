@@ -1,3 +1,4 @@
+
 var outputBinding = new Shiny.OutputBinding();
 $.extend(outputBinding, {
   find: function(scope) {
@@ -8,7 +9,47 @@ $.extend(outputBinding, {
   }});
 Shiny.outputBindings.register(outputBinding);
 
+var clusters_return = "???";
+
+// TODO: rewrite as a function that encodes 0 and 1s 
+function get_nodes_children(obj) {
+  var n = obj.length;
+  var id = Array.apply(null, Array(n));
+  var label = Array.apply(null, Array(n));
+  var merge_id = Array.apply(null, Array(n));
+  var merge_height = Array.apply(null, Array(n));
+  var terminal = Array.apply(null, Array(n));
+  for(i=0; i < obj.length; i++) {
+    var obj_i = obj[i];
+    id[i] = obj_i.id;
+    label[i] = obj_i.name;
+    merge_id[i] = obj_i.merge_id
+    merge_height[i] = obj_i.height
+    terminal[i] = obj_i._children ? true : false;
+  }
+  var res = {id: id, label: label, merge_id: merge_id, merge_height: merge_height, terminal: terminal};
+  return(res);
+}
+
+var inputBinding = new Shiny.InputBinding();
+$.extend(inputBinding, {
+  find: function(scope) {
+    return $(scope).find('#download');
+  },
+  getValue: function(el) {
+    console.log(clusters_return);
+    return get_nodes_children(clusters_return);
+  },
+  subscribe: function(el, callback) {
+    $(el).on("click", function(e) {
+      callback();
+    });
+  },
+});
+Shiny.inputBindings.register(inputBinding);
+
 function wrapper(el, data) {
+  
   var margin = {top: 10, bottom: 5, left: 5, right: 5},
       height = window.innerHeight - $('.nav-tabs').height() - $('.navbar').height() - margin.bottom - margin.top,
       zoom_scale = 1;
@@ -18,6 +59,7 @@ function wrapper(el, data) {
     root;
   
   if(data) { // wait for data to load
+  
       root = JSON.parse(data.data);
       
       root.x0 = height / 2;
@@ -132,9 +174,14 @@ function wrapper(el, data) {
   }
 
   function update(source) {
+    
+    
     // Compute the new cluster layout.
     var nodes = cluster.nodes(root).reverse(),
         links = cluster.links(nodes);
+        
+    clusters_return = nodes; 
+    
 
     // Normalize for fixed-depth.
     nodes.forEach(function(d) { d.y = d.depth * 180; });
@@ -268,7 +315,6 @@ function wrapper(el, data) {
         .attr("transform", "scale(" + 1/zoom_scale + ")");
     }
 
-
     // Transition nodes to their new position.
     var nodeUpdate = node.transition()
         .duration(duration)
@@ -277,7 +323,6 @@ function wrapper(el, data) {
     nodeUpdate.select("circle")
         .attr("r", 4.5)
         .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
-
     
     nodeUpdate.select("text")
         .style("fill-opacity", 1);
@@ -458,5 +503,7 @@ d3.selection.prototype.moveToFront = function() {
     this.parentNode.appendChild(this);
   });
 };
+
+
 
 

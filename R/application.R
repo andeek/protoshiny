@@ -411,6 +411,32 @@ get_server <- function() {
       pa <- reset_path()
       path(pa)
     })
+    
+    ## download button
+    clustersDownload <- reactive({
+      if(exists("input") && length(names(input)) > 0){
+        cluster_data <- input[["download"]]
+        return(cluster_data)
+      } else {
+        return("no input")
+      }
+    })
+    
+    output$download <- downloadHandler(
+      filename = function() paste("protoshiny-hc-", Sys.Date(), ".RData", sep=""),
+      content = function(file) {
+        cl <- clustersDownload()
+        
+        df <- list()
+        for(i in seq_along(cl)) {
+          df <- c(df, list(unlist(cl[[i]])))
+        }
+        names(df) <- names(cl)
+        df <- as.data.frame(df)
+        save(df, file = file)
+    })
+    
+    
   })
 }
 
@@ -441,6 +467,8 @@ get_ui <- function() {
                id="top-nav",
                tabPanel(title="", icon=icon("home", "fa-2x"),
                         div(style = "position:absolute;right:1em;",
+                            downloadLink('download', 'Download', class = "download_clusters"),
+                            " | ",
                             actionLink('reset', 'Reset')),
                         tabsetPanel(id = "tabs",
                                     tabPanel("Data", id = "data_tab",
