@@ -37,7 +37,6 @@ $.extend(inputBinding, {
     return $(scope).find('#download');
   },
   getValue: function(el) {
-    console.log(clusters_return);
     return get_nodes_children(clusters_return);
   },
   subscribe: function(el, callback) {
