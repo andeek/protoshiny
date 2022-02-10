@@ -16,11 +16,15 @@ LazyData: true
 Imports:
     DT,
     dynamicTreeCut,
-    protoclust, 
-    shiny, 
-    shinycssloaders, 
+    protoclust,
+    rare,
+    shiny,
+    shinycssloaders,
     shinythemes,
     tools
 Depends: R (>= 4.0.0)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Remotes: jacobbien/protoclust
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

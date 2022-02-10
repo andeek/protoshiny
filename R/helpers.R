@@ -96,10 +96,10 @@ fixUploadedFilesNames <- function(x) {
 #' @param hc hclust object
 #' @param dc a vector of length n with integers between 0 and num_clusters such as
 #'     is outputted by dynamicTreeCut::cutreeDynamicTree
-#' @return Returns an n-vector giving the labels of each interior node. A positive value
-#'     means that all nodes in that node's subtree have that label.  A value of -1 means
-#'     that this node's children have different labels.  A value of -2 means that at least
-#'     one child has a value of -1.  And so forth.
+#' @return Returns an (n-1)-vector giving the labels of each interior node. A
+#'   positive value means that all nodes in that node's subtree have that label.
+#'   A value of -1 means that this node's children have different labels.  A
+#'   value of -2 means that at least one child has a value of -1.  And so forth.
 #' @keywords internal
 get_nodes_to_expand_info <- function(hc, dc) {
   n <- length(dc)
@@ -122,6 +122,34 @@ get_nodes_to_expand_info <- function(hc, dc) {
   lab
 }
 
+#' Get clustering of leaves from merge_id
+#' 
+#' This function expects a set of node id's of a hierarchical clustering object
+#' that would define a partition of the leaves.  It returns a vector giving the 
+#' implied clustering of the leaves (analogous to the output of `stats::cutree`).
+#' 
+#' @param hc An object of class `hclust`
+#' @param merge_id A numeric vector.  Indexing of nodes should match that of the
+#'  `merge` matrix in an `hclust` object.  In particular, positive numbers 
+#'  specify interior nodes and negative numbers specify leaves. These nodes must
+#'  define a partition of the leaves, meaning no node in `merge_id` should be a
+#'  descendent of another and every leaf should either be included directly or 
+#'  be the descendent of one of the interior nodes referenced by `merge_id`.
+get_cut_from_merge_id <- function(hc, merge_id) {
+  leaves <- lapply(merge_id, rare::find.leaves, merge = hc$merge)
+  if (any(table(unlist(leaves)) > 1))
+    stop("Some leaves descend from multiple merge_id nodes. Not a partition.")
+  num_leaves <- nrow(hc$merge) + 1
+  cl <- rep(NA, num_leaves)
+  for (i in seq_along(leaves)) {
+    cl[leaves[[i]]] <- i
+  }
+  if (any(is.na(cl))) 
+    stop("Some leaves do not descend from any merge_id nodes. Not a partition.")
+  cl <- match(cl, unique(cl)) # put cluster labels in ascending order
+  names(cl) <- hc$labels
+  cl
+}
 
 ###
 ### Additional UI functions
