@@ -435,6 +435,7 @@ get_server <- function() {
         df <- as.data.frame(df)
         df$merge_id <- as.integer(df$merge_id)
         
+        hc <- data()
         terminal <- df$terminal | df$merge_id < 0
         cl <- protoshiny:::get_cut_from_merge_id(hc, df$merge_id[terminal])
         
