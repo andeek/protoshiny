@@ -31,8 +31,18 @@ function select_wrapper(el, data) {
 
   d3.select(el).select("select").remove();
   d3.select(el).select(".selectize-control").remove();
+  
+  // hide link buttons
+  var links = d3.select(".link_buttons");
+  console.log(links);
+  links.style("visibility", "hidden");
+  
     
   if(selected_tab == "Visualization") { // only have the search if on the viz tab
+    
+    //bring back link buttons
+    links.style("visibility", "visible");
+    
     var label_select = d3.select(el)
       .append("select")
         .attr("id", "select-label")

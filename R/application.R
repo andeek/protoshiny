@@ -181,6 +181,22 @@ get_server <- function() {
         size = "s"
       ))
     })
+    observeEvent(input$help_cluster_download, {
+      showModal(modalDialog(
+        "Download cluster label vector resulting from current dendrogram.",
+        easyClose = TRUE,
+        footer = NULL,
+        size = "s"
+      ))
+    })
+    observeEvent(input$help_reset, {
+      showModal(modalDialog(
+        "Reset dendrogram back to settings in Data tab.",
+        easyClose = TRUE,
+        footer = NULL,
+        size = "s"
+      ))
+    })
 
     ##reactive data object ----
     objects <- reactive({
@@ -472,10 +488,13 @@ get_ui <- function() {
     navbarPage("protoshiny",
                id="top-nav",
                tabPanel(title="", icon=icon("home", "fa-2x"),
-                        div(style = "position:absolute;right:1em;",
-                            downloadLink('download', 'Download', class = "download_clusters"),
+                        div(style = "position:absolute;right:1em;visibility:hidden;",
+                            downloadLink('download', 'Download'),
+                            actionLink("help_cluster_download", icon("info-circle")),
                             " | ",
-                            actionLink('reset', 'Reset')),
+                            actionLink('reset', 'Reset'), 
+                            actionLink("help_reset", icon("info-circle")),
+                            class = "link_buttons"),
                         tabsetPanel(id = "tabs",
                                     tabPanel("Data", id = "data_tab",
                                              br(),
