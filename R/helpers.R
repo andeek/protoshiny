@@ -133,8 +133,8 @@ get_nodes_to_expand_info <- function(hc, dc) {
 #'  `merge` matrix in an `hclust` object.  In particular, positive numbers 
 #'  specify interior nodes and negative numbers specify leaves. These nodes must
 #'  define a partition of the leaves, meaning no node in `merge_id` should be a
-#'  descendent of another and every leaf should either be included directly or 
-#'  be the descendent of one of the interior nodes referenced by `merge_id`.
+#'  descendant of another and every leaf should either be included directly or 
+#'  be the descendant of one of the interior nodes referenced by `merge_id`.
 get_cut_from_merge_id <- function(hc, merge_id) {
   leaves <- lapply(merge_id, rare::find.leaves, merge = hc$merge)
   if (any(table(unlist(leaves)) > 1))
@@ -151,6 +151,23 @@ get_cut_from_merge_id <- function(hc, merge_id) {
   cl
 }
 
+#' Given a clustering get the root-to-node paths for expanded nodes
+#' 
+#' This function returns the binary path from root to node for each interior 
+#' node that needs to be open to return the input clustering.  Note that this 
+#' will only be possible for a clustering `cl` in which each cluster corresponds
+#' to a branch of `hc`.
+#' 
+#' @param hc An object of class `hclust`
+#' @param cl A numeric vector in the format of the output of `stats::cutree` 
+#' that gives the cluster memberships of each leaf.
+get_paths_from_cut <- function(hc, cl) {
+  info <- get_nodes_to_expand_info(hc, cl)
+  paths <- protoclust::find_elements(hc)
+  paths$int_paths[info == -1]
+}
+
+  
 ###
 ### Additional UI functions
 ###
