@@ -13,10 +13,10 @@ get_nodes_to_expand_info(hc, dc)
 is outputted by dynamicTreeCut::cutreeDynamicTree}
 }
 \value{
-Returns an n-vector giving the labels of each interior node. A positive value
-    means that all nodes in that node's subtree have that label.  A value of -1 means
-    that this node's children have different labels.  A value of -2 means that at least
-    one child has a value of -1.  And so forth.
+Returns an (n-1)-vector giving the labels of each interior node. A
+  positive value means that all nodes in that node's subtree have that label.
+  A value of -1 means that this node's children have different labels.  A
+  value of -2 means that at least one child has a value of -1.  And so forth.
 }
 \description{
 Get the labels of each interior node
