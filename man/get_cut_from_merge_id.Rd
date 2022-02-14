@@ -13,8 +13,8 @@ get_cut_from_merge_id(hc, merge_id)
 `merge` matrix in an `hclust` object.  In particular, positive numbers 
 specify interior nodes and negative numbers specify leaves. These nodes must
 define a partition of the leaves, meaning no node in `merge_id` should be a
-descendent of another and every leaf should either be included directly or 
-be the descendent of one of the interior nodes referenced by `merge_id`.}
+descendant of another and every leaf should either be included directly or 
+be the descendant of one of the interior nodes referenced by `merge_id`.}
 }
 \description{
 This function expects a set of node id's of a hierarchical clustering object
