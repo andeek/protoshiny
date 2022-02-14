@@ -64,7 +64,7 @@ get_server <- function() {
     output$choose_object <- renderUI({
       obj <- objects()
       if (!is.null(obj)) {
-        ii <- as.numeric(which(sapply(obj$env, function(o) class(o)[1] == "protoclust")))
+        ii <- as.numeric(which(sapply(obj$env, function(o) "protoclust" %in% class(o))))
         if (length(ii) == 0) {
           stop(".Rdata file must have a protoclust object.")
         } else if (length(ii) == 1) {
@@ -404,7 +404,6 @@ get_server <- function() {
         } else {
           list(data = NULL, path = NULL, img_path = NULL, img_path_loc = NULL)
         }
-
       })
     })
 
@@ -455,10 +454,11 @@ get_server <- function() {
         terminal <- df$terminal | df$merge_id < 0
         cl <- protoshiny:::get_cut_from_merge_id(hc, df$merge_id[terminal])
         
-        save(cl, file = file)
+        hc$protoshiny <- list(clusters = cl)
+        class(hc) <- c(class(hc), "protoshiny")
+        
+        save(hc, file = file)
     })
-    
-    
   })
 }
 
