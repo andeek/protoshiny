@@ -245,6 +245,23 @@ get_server <- function() {
     ## make path reactive so that it can reset with the new data ----
     path <- reactiveVal(NULL)
     reset_path <- reactiveVal(NULL)
+    
+    ## if the loaded object is saved from a protoshiny session load the appropriate path ----
+    observeEvent(input$dataset, {
+      dat <- data()
+      
+      if(!is.null(dat)) { 
+        ## data is loaded, check if object is class protoshiny
+        if("protoshiny" %in% class(dat)) {
+          ## this is a previously saved protoshiny object, need to send path
+          path(lapply(get_paths_from_cut(dat, dat$protoshiny$clusters), function(x) paste(x, collapse = ",")))
+        } else {
+          path(NULL)
+        }
+      } else {
+        path(NULL)
+      }
+    })
 
     ## keep track of selected tab ----
     tab <- reactiveVal(NULL)

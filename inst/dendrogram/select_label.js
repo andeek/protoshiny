@@ -34,7 +34,6 @@ function select_wrapper(el, data) {
   
   // hide link buttons
   var links = d3.select(".link_buttons");
-  console.log(links);
   links.style("visibility", "hidden");
   
     

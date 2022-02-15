@@ -162,7 +162,7 @@ get_cut_from_merge_id <- function(hc, merge_id) {
 #' @param cl A numeric vector in the format of the output of `stats::cutree` 
 #' that gives the cluster memberships of each leaf.
 get_paths_from_cut <- function(hc, cl) {
-  info <- get_nodes_to_expand_info(hc, cl)
+  info <- protoshiny:::get_nodes_to_expand_info(hc, cl)
   paths <- protoclust::find_elements(hc)
   paths$int_paths[info == -1]
 }

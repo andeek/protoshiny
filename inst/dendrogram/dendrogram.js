@@ -48,6 +48,7 @@ $.extend(inputBinding, {
 Shiny.inputBindings.register(inputBinding);
 
 function wrapper(el, data) {
+  console.log("in the wrapper");
   
   var margin = {top: 10, bottom: 5, left: 5, right: 5},
       height = window.innerHeight - $('.nav-tabs').height() - $('.navbar').height() - margin.bottom - margin.top,
@@ -143,6 +144,7 @@ function wrapper(el, data) {
           .text(function(d) { return d; });
       
       // collapse children and draw tree
+      console.log(data.path);
       if(data.path) {
         var len = 0;
         collapse(root);
@@ -173,8 +175,6 @@ function wrapper(el, data) {
   }
 
   function update(source) {
-    
-    
     // Compute the new cluster layout.
     var nodes = cluster.nodes(root).reverse(),
         links = cluster.links(nodes);
@@ -463,6 +463,7 @@ function wrapper(el, data) {
   function nav_path(path, data) {
     var path_vec = path.split(",");
     var dat = data;
+    console.log(path_vec);
     
     // expand first level
     expand(dat);
