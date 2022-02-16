@@ -151,12 +151,12 @@ get_cut_from_merge_id <- function(hc, merge_id) {
   cl
 }
 
-#' Given a clustering get the root-to-node paths for expanded nodes
+#' Given a clustering get the root-to-node paths for visible nodes
 #' 
-#' This function returns the binary path from root to node for each interior 
-#' node that needs to be open to return the input clustering.  Note that this 
-#' will only be possible for a clustering `cl` in which each cluster corresponds
-#' to a branch of `hc`.
+#' This function returns the binary path from root to node for each
+#' node that should be displayed in order to return the input clustering.
+#' Note that this  will only be possible for a clustering `cl` in which each 
+#' cluster corresponds to a branch of `hc`.
 #' 
 #' @param hc An object of class `hclust`
 #' @param cl A numeric vector in the format of the output of `stats::cutree` 
@@ -164,7 +164,11 @@ get_cut_from_merge_id <- function(hc, merge_id) {
 get_paths_from_cut <- function(hc, cl) {
   info <- protoshiny:::get_nodes_to_expand_info(hc, cl)
   paths <- protoclust::find_elements(hc)
-  paths$int_paths[info == -1]
+  paths_of_nodes_to_open <- paths$int_paths[info <= -1]
+  c(
+    lapply(paths_of_nodes_to_open, function(path) c(path, 0)),
+    lapply(paths_of_nodes_to_open, function(path) c(path, 1))
+    )
 }
 
   
