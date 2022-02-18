@@ -9,7 +9,7 @@ Authors@R: c(person("Andee", "Kaplan", email = "andee.kaplan@colostate.edu", rol
 Description: Shiny app to interactively visualize hierarchical clustering with prototypes. 
     For details on hierarchical clustering with prototypes, see 
     http://faculty.bscb.cornell.edu/~bien/papers/jasa2011minimax.pdf. This package currently launches 
-    the orotoshiny application.
+    the protoshiny application.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -24,7 +24,6 @@ Imports:
     tools
 Depends: R (>= 4.0.0)
 RoxygenNote: 7.1.2
-Remotes: jacobbien/protoclust
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

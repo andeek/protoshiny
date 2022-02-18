@@ -33,6 +33,7 @@
 #' @importFrom DT DTOutput
 #' @importFrom tools file_ext
 #' @importFrom protoclust find_elements
+#' @importFrom shiny downloadHandler
 get_server <- function() {
   ##list of default data files
   data_sets <- list.files(system.file("ext_data", package = "protoshiny", mustWork = TRUE), pattern="*.RData|*.Rdata")
@@ -83,7 +84,18 @@ get_server <- function() {
       }
     })
     output$choose_display_options <- renderUI({
-      #obj <- objects()
+      dat <- data()
+      
+      if("protoshiny" %in% class(dat)) {
+        init_obj <- radioButtons("init_type",
+                                 HTML("Choose initial display type", as.character(actionLink("help_init", icon("info-circle")))),
+                                 choices = c("Saved" = "saved", "Top 15" = "default", "Dynamic Cut" = "dynamic"))
+      } else {
+        init_obj <- radioButtons("init_type",
+                                 HTML("Choose initial display type", as.character(actionLink("help_init", icon("info-circle")))),
+                                 choices = c("Top 15" = "default", "Dynamic Cut" = "dynamic"))
+      }
+      
       tagList(
         # selectInput("object",
         #             HTML("Choose loaded object", as.character(actionLink("help_object", icon("info-circle")))),
@@ -97,9 +109,7 @@ get_server <- function() {
                     HTML('Upload all label images (.png)', as.character(actionLink("help_label_image", icon("info-circle")))),
                     accept="image/png", multiple = TRUE)
         ),
-        radioButtons("init_type",
-                     HTML("Choose initial display type", as.character(actionLink("help_init", icon("info-circle")))),
-                     choices = c("Default" = "default", "Dynamic Cut" = "dynamic")),
+        init_obj, ## choices change depending on if saved object reloaded
         conditionalPanel(
           condition = "input.init_type == 'dynamic'",
           numericInput('min_module_size',
@@ -176,6 +186,7 @@ get_server <- function() {
       showModal(modalDialog(
         "By default, the highest 15 nodes in the tree are shown.",
         "'Dynamic cut' is a data-adaptive algorithm that chooses how much of the tree to show initially.",
+        "If a previous session is loaded into protoshiny, you will be able to choose the saved state as the initial view.",
         easyClose = TRUE,
         footer = NULL,
         size = "s"
@@ -183,7 +194,8 @@ get_server <- function() {
     })
     observeEvent(input$help_cluster_download, {
       showModal(modalDialog(
-        "Download cluster label vector resulting from current dendrogram.",
+        "Download a 'protoshiny' object containing the cluster label vector resulting from current dendrogram.", 
+        "To easily access these clusteers, see the protoshiny::get_clusters function.",
         easyClose = TRUE,
         footer = NULL,
         size = "s"
@@ -245,23 +257,6 @@ get_server <- function() {
     ## make path reactive so that it can reset with the new data ----
     path <- reactiveVal(NULL)
     reset_path <- reactiveVal(NULL)
-    
-    ## if the loaded object is saved from a protoshiny session load the appropriate path ----
-    observeEvent(input$dataset, {
-      dat <- data()
-      
-      if(!is.null(dat)) { 
-        ## data is loaded, check if object is class protoshiny
-        if("protoshiny" %in% class(dat)) {
-          ## this is a previously saved protoshiny object, need to send path
-          path(lapply(get_paths_from_cut(dat, dat$protoshiny$clusters), function(x) paste(x, collapse = ",")))
-        } else {
-          path(NULL)
-        }
-      } else {
-        path(NULL)
-      }
-    })
 
     ## keep track of selected tab ----
     tab <- reactiveVal(NULL)
@@ -274,32 +269,35 @@ get_server <- function() {
       pa <- path()
       if(input$tabs == "Visualization") reset_path(pa)
     })
-
-    ## update path if dynamic treecut is used ----
+    
+    ## update path based on initial view ----
     observeEvent({input$init_type; input$min_module_size}, {
       req(input$init_type, input$min_module_size)
-
-      if(input$init_type == 'dynamic') {
-        dat <- data()
-        lab <- labels()
-        d <- input$min_module_size
-
-        if(!is.null(dat)) {
+      dat <- data()
+      lab <- labels()
+      
+      if(!is.null(dat)) {
+        if(input$init_type == 'dynamic') {
+          d <- input$min_module_size
+          
           height <- quantile(dat$height, .1)
-
+          
           # get dynamic cuts
           dc <- cutreeDynamicTree(dat, maxTreeHeight = height, minModuleSize = d)
           out <- get_nodes_to_expand_info(dat, dc)
-
+          
           # nodes to expand
           path(lapply(lab$int_paths[out == -1], function(x) paste(x, collapse = ",")))
+        } else if(input$init_type == 'saved') {
+          paths <- get_paths_from_cut(dat, dat$protoshiny$clusters)
+          path(lapply(paths, function(x) paste(x, collapse = ",")))
         } else {
           path(NULL)
         }
-
       } else {
         path(NULL)
       }
+      
     })
 
     ## updates path based on the search functionality ----
@@ -455,7 +453,7 @@ get_server <- function() {
     })
     
     output$download <- downloadHandler(
-      filename = function() paste("protoshiny-hc-", Sys.Date(), ".RData", sep=""),
+      filename = function() paste("protoshiny-hc-", gsub(":", "", gsub("\\s", "_", Sys.time())), ".RData", sep=""),
       content = function(file) {
         cl <- clustersDownload()
         
@@ -469,10 +467,10 @@ get_server <- function() {
         
         hc <- data()
         terminal <- df$terminal | df$merge_id < 0
-        cl <- protoshiny:::get_cut_from_merge_id(hc, df$merge_id[terminal])
+        cl <- get_cut_from_merge_id(hc, df$merge_id[terminal])
         
-        hc$protoshiny <- list(clusters = cl)
-        class(hc) <- c(class(hc), "protoshiny")
+        hc$protoshiny <- list(clusters = cl, save_time = Sys.time())
+        class(hc) <- c("protoshiny", class(hc))
         
         save(hc, file = file)
     })
@@ -486,6 +484,7 @@ get_server <- function() {
 #' @importFrom shiny div
 #' @importFrom shiny icon
 #' @importFrom shiny actionLink
+#' @importFrom shiny downloadLink
 #' @importFrom shiny tabsetPanel
 #' @importFrom shiny tabPanel
 #' @importFrom shiny br
