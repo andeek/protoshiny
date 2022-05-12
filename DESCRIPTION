@@ -1,21 +1,21 @@
 Package: protoshiny
 Type: Package
-Title: Interactive dendrograms for Visualizing Hierarchical Clusters with Prototypes
+Title:Interactive Dendrograms for Visualizing Hierarchical Clusters with Prototypes
 Version: 0.1.0
 Authors@R: c(person("Andee", "Kaplan", email = "andee.kaplan@colostate.edu", role = c("aut", "cre")),
     person("Jacob", "Bien", role = "aut"),
     person("Mike", "Bostock", role = "cph", comment = "Author of included d3.js library"),
     person("Brian", "Reavis", role = "cph", comment = "Author of included selectize.js library"))
 Description: Shiny app to interactively visualize hierarchical clustering with prototypes. 
-    For details on hierarchical clustering with prototypes, see 
-    http://faculty.bscb.cornell.edu/~bien/papers/jasa2011minimax.pdf. This package currently launches 
-    the protoshiny application.
+    For details on hierarchical clustering with prototypes, see "Hierarchical Clustering With Prototypes via Minimax Linkage" 
+    by Jacob Bien & Robert Tibshirani (2011). This package currently launches the application.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
     DT,
     dynamicTreeCut,
+    methods,
     protoclust,
     rare,
     shiny,

@@ -34,6 +34,7 @@
 #' @importFrom tools file_ext
 #' @importFrom protoclust find_elements
 #' @importFrom shiny downloadHandler
+#' @importFrom methods is
 get_server <- function() {
   ##list of default data files
   data_sets <- list.files(system.file("ext_data", package = "protoshiny", mustWork = TRUE), pattern="*.RData|*.Rdata")
@@ -215,7 +216,7 @@ get_server <- function() {
       supported_formats <- c("rdata") ##only accept .RData
 
       if(!is.null(input$dataset)) {
-        if(class(input$dataset) == "character") {
+        if(is(input$dataset, "character")) {
           name <- file <- system.file("ext_data", input$dataset, package = "protoshiny", mustWork = TRUE)
         } else {
           file <- input$dataset$datapath ##uploaded data

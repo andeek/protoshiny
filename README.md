@@ -12,8 +12,9 @@ status](https://travis-ci.com/andeek/protoshiny.svg?branch=master)](https://trav
 This package launches a Shiny app to interactively visualize
 hierarchical clustering with prototypes.
 
-For details on hierarchical clustering with prototypes, see
-<http://faculty.bscb.cornell.edu/~bien/papers/jasa2011minimax.pdf>
+For details on hierarchical clustering with prototypes, see see
+“Hierarchical Clustering With Prototypes via Minimax Linkage” by Jacob
+Bien & Robert Tibshirani (2011).
 
 ## Installation
 
