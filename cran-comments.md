@@ -10,7 +10,18 @@
 * r-hub Oracle Solaris 10, x86, 32 bit, R-release
 
 ## R CMD check results
-There were no ERRORs, WARNINGs, or NOTEs.
+There were no ERRORs or WARNINGs and one NOTE:
+
+Maintainer: 'Andee Kaplan <andee.kaplan@colostate.edu>'
+New submission
+
+Possibly misspelled words in DESCRIPTION:
+  Bien (12:14)
+  Dendrograms (3:20)
+  Minimax (11:110)
+  Tibshirani (12:28)
+    
+(These are not misspelled)
 
 ## Downstream dependencies
 There are currently no downstream dependencies for this package.

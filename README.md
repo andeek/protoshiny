@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Travis build
-status](https://travis-ci.com/andeek/protoshiny.svg?branch=master)](https://travis-ci.com/andeek/protoshiny)
+status](https://app.travis-ci.com/andeek/protoshiny.svg?branch=master)](https://app.travis-ci.com/andeek/protoshiny.svg?branch=master)
 <!-- badges: end -->
 
 This package launches a Shiny app to interactively visualize

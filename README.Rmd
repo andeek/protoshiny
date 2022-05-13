@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # protoshiny
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/andeek/protoshiny.svg?branch=master)](https://travis-ci.com/andeek/protoshiny)
+[![Travis build status](https://app.travis-ci.com/andeek/protoshiny.svg?branch=master)](https://app.travis-ci.com/andeek/protoshiny.svg?branch=master)
 <!-- badges: end -->
 
 This package launches a Shiny app to interactively visualize hierarchical clustering with prototypes.
