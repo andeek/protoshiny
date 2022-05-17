@@ -9,3 +9,4 @@
 ^README\.Rmd$
 ^LICENSE\.md$
 ^revdep$
+^CRAN-SUBMISSION$

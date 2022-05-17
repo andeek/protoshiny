@@ -6,6 +6,9 @@
 \usage{
 visualize_hc()
 }
+\value{
+No return value, launches the protoshiny Shiny application.
+}
 \description{
 Run a local instance of protoshiny
 }

@@ -7,8 +7,8 @@ Authors@R: c(person("Andee", "Kaplan", email = "andee.kaplan@colostate.edu", rol
     person("Mike", "Bostock", role = "cph", comment = "Author of included d3.js library"),
     person("Brian", "Reavis", role = "cph", comment = "Author of included selectize.js library"))
 Description: Shiny app to interactively visualize hierarchical clustering with prototypes. 
-    For details on hierarchical clustering with prototypes, see "Hierarchical Clustering With Prototypes via Minimax Linkage" 
-    by Jacob Bien & Robert Tibshirani (2011). This package currently launches the application.
+    For details on hierarchical clustering with prototypes, see 
+    Bien and Tibshirani (2011) <doi:10.1198/jasa.2011.tm10183>. This package currently launches the application.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

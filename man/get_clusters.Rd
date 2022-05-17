@@ -9,6 +9,9 @@ get_clusters(hc)
 \arguments{
 \item{hc}{A protoshiny object downloaded from the web interface.}
 }
+\value{
+A vector of saved cluster assignments resulting from interaction in the protoshiny application.
+}
 \description{
 Extract cluster labels
 }

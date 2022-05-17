@@ -2,7 +2,14 @@
 #'
 #' @export
 #' @param hc A generic hclust object using any linkage.
-#' @param protos A vector of prototype label indices for each branch in the dendrogram. 
+#' @param protos A vector of prototype label indices for each branch in the dendrogram.
+#'               The i-th element is the index of the prototype corresponding to the cluster 
+#'               formed on the i-th merge.
+#' @return An object of class \code{\link{protoclust}} with a user specified vector of representative prototypes for each cluster.
+#'         This object is just like \code{hclust} but has an identical element:
+#'         \item{merge, height,order}{identical to the values returned by \code{\link{hclust}}}
+#'         \item{protos}{a vector of length n - 1.  The i-th element is the index of
+#'                       the prototype corresponding to the cluster formed on the i-th merge.}
 as.protoclust <- function(hc, protos) {
   UseMethod("as.protoclust", hc)
 }
