@@ -19,9 +19,9 @@ knitr::opts_chunk$set(
 [![Travis build status](https://app.travis-ci.com/andeek/protoshiny.svg?branch=master)](https://app.travis-ci.com/andeek/protoshiny.svg?branch=master)
 <!-- badges: end -->
 
-This package launches a Shiny app to interactively visualize hierarchical clustering with prototypes.
+This package launches a Shiny app to interactively visualize hierarchical clustering with prototypes as described in ["Interactive Exploration of Large Dendrograms with Prototypes"](https://arxiv.org/abs/2206.01703) by Andee Kaplan & Jacob Bien (2022).
 
-For details on hierarchical clustering with prototypes, see see "Hierarchical Clustering With Prototypes via Minimax Linkage" by Jacob Bien & Robert Tibshirani (2011).
+For details on hierarchical clustering with prototypes, see ["Hierarchical Clustering With Prototypes via Minimax Linkage"](http://faculty.marshall.usc.edu/jacob-bien/papers/jasa2011minimax.pdf) by Jacob Bien & Robert Tibshirani (2011).
 
 ## Installation
 
