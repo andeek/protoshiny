@@ -11,7 +11,7 @@
 * r-hub Ubuntu Linux 24.04.3 LTS, R-devel, GCC
 
 ## R CMD check results
-There were no ERRORs or WARNINGs and one NOTE:
+There were no ERRORs, WARNINGs, or NOTEs.
 
 ## Downstream dependencies
 There are currently no downstream dependencies for this package.
