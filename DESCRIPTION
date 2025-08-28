@@ -1,7 +1,7 @@
 Package: protoshiny
 Type: Package
-Title:Interactive Dendrograms for Visualizing Hierarchical Clusters with Prototypes
-Version: 0.1.0
+Title: Interactive Dendrograms for Visualizing Hierarchical Clusters with Prototypes
+Version: 0.1.1
 Authors@R: c(person("Andee", "Kaplan", email = "andee.kaplan@colostate.edu", role = c("aut", "cre")),
     person("Jacob", "Bien", role = "aut"),
     person("Mike", "Bostock", role = "cph", comment = "Author of included d3.js library"),
@@ -23,7 +23,7 @@ Imports:
     shinythemes,
     tools
 Depends: R (>= 4.0.0)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
