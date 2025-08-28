@@ -4,7 +4,7 @@
 \alias{words}
 \title{Dataset words}
 \source{
-\url{https://cs.nyu.edu/~roweis/data.html}
+\url{https://cs.nyu.edu/home/people/in_memoriam/roweis/data.html}
 }
 \description{
 This is a protoclust object for use with protoshiny. It is the hierarchical clustering of 19,599 of the most common words from Grolier's Encyclopedia.

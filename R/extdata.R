@@ -41,6 +41,6 @@ NULL
 #' 
 #' @name words
 #' 
-#' @source \url{https://cs.nyu.edu/~roweis/data.html}
+#' @source \url{https://cs.nyu.edu/home/people/in_memoriam/roweis/data.html}
 NULL
 
